@@ -15,10 +15,6 @@ namespace EventBookSystem.API.Controllers
 
         public VenuesController(IServiceManager service) => _services = service;
 
-        /// <summary>
-        /// Get the list of all venues
-        /// </summary>
-        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAllVenues()
         {
@@ -27,11 +23,6 @@ namespace EventBookSystem.API.Controllers
             return Ok(venues);
         }
 
-        /// <summary>
-        /// Get venue by Id
-        /// </summary>
-        /// <param name="venueId"></param>
-        /// <returns></returns>
         [HttpGet("{venueId}")]
         public async Task<IActionResult> GetVenueByIdAsync(Guid venueId)
         {
@@ -43,11 +34,6 @@ namespace EventBookSystem.API.Controllers
             return Ok(venueDto);
         }
 
-        /// <summary>
-        /// Returns all sections for venue
-        /// </summary>
-        /// <param name="venueId"></param>
-        /// <returns></returns>
         [HttpGet("{venueId}/sections")]
         public async Task<IActionResult> GetSectionsByVenueAsync(Guid venueId)
         {
@@ -56,11 +42,6 @@ namespace EventBookSystem.API.Controllers
             return Ok(sections);
         }
 
-        /// <summary>
-        /// Add venue
-        /// </summary>
-        /// <param name="venueDto"></param>
-        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> CreateVenueAsync([FromBody] VenueForCreationDto venueDto)
         {
@@ -72,12 +53,6 @@ namespace EventBookSystem.API.Controllers
             return Ok(createdVenue);
         }
 
-        /// <summary>
-        /// Update venue by Id
-        /// </summary>
-        /// <param name="venueId"></param>
-        /// <param name="venueDto"></param>
-        /// <returns></returns>
         [HttpPut("{venueId}")]
         public async Task<IActionResult> UpdateVenueAsync(Guid venueId, [FromBody] VenueForUpdateDto venueDto)
         {
@@ -96,11 +71,6 @@ namespace EventBookSystem.API.Controllers
             return NoContent();
         }
 
-        /// <summary>
-        /// Delete venue by Id
-        /// </summary>
-        /// <param name="venueId"></param>
-        /// <returns></returns>
         [HttpDelete("{venueId}")]
         public async Task<IActionResult> DeleteEventAsync(Guid venueId)
         {
@@ -115,6 +85,5 @@ namespace EventBookSystem.API.Controllers
 
             return NoContent();
         }
-
     }
 }

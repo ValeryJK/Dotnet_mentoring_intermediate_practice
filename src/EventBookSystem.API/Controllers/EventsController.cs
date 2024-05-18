@@ -15,10 +15,6 @@ namespace EventBookSystem.API.Controllers
 
         public EventsController(IServiceManager service) => _services = service;
 
-        /// <summary>
-        /// Get the list of all events
-        /// </summary>
-        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAllEvents()
         {
@@ -27,11 +23,6 @@ namespace EventBookSystem.API.Controllers
             return Ok(events);
         }
 
-        /// <summary>
-        /// Get event by Id
-        /// </summary>
-        /// <param name="eventId"></param>
-        /// <returns></returns>
         [HttpGet("{eventId}")]
         public async Task<IActionResult> GetEventByIdAsync(Guid eventId)
         {
@@ -45,12 +36,6 @@ namespace EventBookSystem.API.Controllers
             return Ok(eventDto);
         }
 
-        /// <summary>
-        /// List of seats (section_id, row_id, seat_id) with seats’ status (id, name) and price options (id, name)
-        /// </summary>
-        /// <param name="eventId"></param>
-        /// <param name="sectionId"></param>
-        /// <returns></returns>
         [HttpGet("{eventId}/sections/{sectionId}/seats")]
         public async Task<IActionResult> GetSeatsBySection(Guid eventId, Guid sectionId)
         {
@@ -59,11 +44,6 @@ namespace EventBookSystem.API.Controllers
             return Ok(seats);
         }
 
-        /// <summary>
-        /// Add event
-        /// </summary>
-        /// <param name="eventDto"></param>
-        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> CreateEventAsync([FromBody] EventForCreationDto eventDto)
         {
@@ -77,12 +57,6 @@ namespace EventBookSystem.API.Controllers
             return Ok(createdEvent);
         }
 
-        /// <summary>
-        /// Update event by Id
-        /// </summary>
-        /// <param name="eventId"></param>
-        /// <param name="eventDto"></param>
-        /// <returns></returns>
         [HttpPut("{eventId}")]
         public async Task<IActionResult> UpdateEventAsync(Guid eventId, [FromBody] EventForUpdateDto eventDto)
         {
@@ -103,11 +77,6 @@ namespace EventBookSystem.API.Controllers
             return NoContent();
         }
 
-        /// <summary>
-        /// Delete event by Id
-        /// </summary>
-        /// <param name="eventId"></param>
-        /// <returns></returns>
         [HttpDelete("{eventId}")]
         public async Task<IActionResult> DeleteEventAsync(Guid eventId)
         {

@@ -15,11 +15,6 @@ namespace EventBookSystem.API.Controllers
 
         public OrdersController(IServiceManager service) => _services = service;
 
-        /// <summary>
-        /// Gets list of items in a cart (cart_id is a uuid, generated and stored the client side)
-        /// </summary>
-        /// <param name="cartId"></param>
-        /// <returns></returns>
         [HttpGet("{cartId}")]
         public async Task<IActionResult> GetCartItemsByCartId(Guid cartId)
         {
@@ -28,13 +23,6 @@ namespace EventBookSystem.API.Controllers
             return cart is null ? NotFound("Cart not found or empty") : Ok(cart);
         }
 
-        /// <summary>
-        ///  Takes object of event_id, seat_id and price_id as a payload and adds a seat to the cart. 
-        ///  Returns a cart state (with total amount) back to the caller)
-        /// </summary>
-        /// <param name="cartId"></param>
-        /// <param name="payload"></param>
-        /// <returns></returns>
         [HttpPost("{cartId}")]
         public async Task<IActionResult> AddSeatToCart(Guid cartId, [FromBody] SeatRequest payload)
         {
@@ -48,13 +36,6 @@ namespace EventBookSystem.API.Controllers
             return Ok(cart);
         }
 
-        /// <summary>
-        /// Deletes a seat for a specific cart
-        /// </summary>
-        /// <param name="cartId"></param>
-        /// <param name="eventId"></param>
-        /// <param name="seatId"></param>
-        /// <returns></returns>
         [HttpDelete("{cartId}/events/{eventId}/seats/{seatId}")]
         public async Task<IActionResult> DeleteSeatFromCart(Guid cartId, Guid eventId, Guid seatId)
         {
@@ -68,11 +49,6 @@ namespace EventBookSystem.API.Controllers
             return NotFound($"The seat with id {cartId} in event {eventId} could not be found in the cart {seatId}.");
         }
 
-        /// <summary>
-        /// Moves all the seats in the cart to a booked state. Returns a PaymentId.
-        /// </summary>
-        /// <param name="cartId"></param>
-        /// <returns></returns>
         [HttpPut("{cartId}/book")]
         public async Task<IActionResult> BookCart(Guid cartId)
         {

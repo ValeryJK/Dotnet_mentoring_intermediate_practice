@@ -14,10 +14,6 @@ namespace EventBookSystem.API.Controllers
 
         public PaymentsController(IServiceManager service) => _services = service;
 
-        /// <summary>
-        /// Get the list of all payments
-        /// </summary>
-        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAllPayments()
         {
@@ -26,11 +22,6 @@ namespace EventBookSystem.API.Controllers
             return Ok(payments);
         }
 
-        /// <summary>
-        /// Returns payment by id
-        /// </summary>
-        /// <param name="paymentId"></param>
-        /// <returns></returns>
         [HttpGet("{paymentId}")]
         public async Task<IActionResult> GetPaymentByIdAsync(Guid paymentId)
         {
@@ -39,11 +30,6 @@ namespace EventBookSystem.API.Controllers
             return Ok(sections);
         }
 
-        /// <summary>
-        /// Updates payment status and moves all the seats related to a payment to the sold state.
-        /// </summary>
-        /// <param name="paymentId"></param>
-        /// <returns></returns>
         [HttpPost("{paymentId}/complete")]
         public async Task<IActionResult> CompletePayment(Guid paymentId)
         {
@@ -51,17 +37,12 @@ namespace EventBookSystem.API.Controllers
 
             if (success)
             {
-                return Ok("Payment completed successfully and seats are marked as sold.");
+                return Ok("Payment completed and seats are marked as sold.");
             }
 
             return BadRequest("Error.");
         }
 
-        /// <summary>
-        /// Updates payment status and moves all the seats related to a payment to the available state.
-        /// </summary>
-        /// <param name="paymentId"></param>
-        /// <returns></returns>
         [HttpPost("{paymentId}/failed")]
         public async Task<IActionResult> FailedPayment(Guid paymentId)
         {
@@ -69,7 +50,7 @@ namespace EventBookSystem.API.Controllers
 
             if (success)
             {
-                return Ok("Payment failed successfully and seats are marked as available.");
+                return Ok("Payment failed and seats are marked as available.");
             }
 
             return BadRequest("Error.");

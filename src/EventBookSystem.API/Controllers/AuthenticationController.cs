@@ -13,12 +13,7 @@ namespace EventBookSystem.API.Controllers
         private readonly IServiceManager _service;
 
         public AuthenticationController(IServiceManager service) => _service = service;
-
-        /// <summary>
-        /// Add new user
-        /// </summary>
-        /// <param name="userForRegistration"></param>
-        /// <returns></returns>
+               
         [HttpPost("register")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> RegisterUser([FromBody] UserForRegistrationDto userForRegistration)
@@ -38,11 +33,6 @@ namespace EventBookSystem.API.Controllers
             return BadRequest(ModelState);
         }
 
-        /// <summary>
-        /// Login user
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
         [HttpPost("login")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto user)
