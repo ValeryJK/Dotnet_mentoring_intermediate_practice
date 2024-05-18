@@ -12,8 +12,8 @@ namespace EventBookSystem.Core.Service.Services.Interfaces
 
         Task<EventDto> CreateEventAsync(EventForCreationDto eventDto);
 
-        Task UpdateEventAsync(Guid eventId, EventForUpdateDto eventDto, bool trackChanges = false);
+        Task UpdateEventAsync(Guid eventId, EventForUpdateDto eventDto, bool trackChanges = true);
 
-        Task DeleteEventAsync(Guid eventId, bool trackChanges = false);
+        Task DeleteEventAsync(Guid eventId, bool trackChanges = true);
     }
 }

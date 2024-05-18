@@ -23,7 +23,7 @@ namespace EventBookSystem.API.Controllers
         [HttpGet("{cartId}")]
         public async Task<IActionResult> GetCartItemsByCartId(Guid cartId)
         {
-            var cart = await _services.CartService.GetCartItemsByCartId(cartId, false);
+            var cart = await _services.CartService.GetCartItemsByCartId(cartId);
 
             if (cart == null)
                 return NotFound("Cart not found or empty");

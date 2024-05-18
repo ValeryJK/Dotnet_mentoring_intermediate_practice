@@ -35,7 +35,7 @@ namespace EventBookSystem.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            return StatusCode(201);
+            return StatusCode(StatusCodes.Status201Created);
         }
 
         /// <summary>

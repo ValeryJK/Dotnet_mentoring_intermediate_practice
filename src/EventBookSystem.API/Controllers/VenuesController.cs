@@ -22,7 +22,7 @@ namespace EventBookSystem.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllVenues()
         {
-            var venues = await _services.VenueService.GetAllVenuesAsync(trackChanges: false);
+            var venues = await _services.VenueService.GetAllVenuesAsync();
 
             return Ok(venues);
         }
@@ -35,7 +35,7 @@ namespace EventBookSystem.API.Controllers
         [HttpGet("{venueId}")]
         public async Task<IActionResult> GetVenueByIdAsync(Guid venueId)
         {
-            var venueDto = await _services.VenueService.GetVenueByIdAsync(venueId, trackChanges: false);
+            var venueDto = await _services.VenueService.GetVenueByIdAsync(venueId);
 
             if (venueDto == null)
                 return NotFound();
@@ -51,7 +51,7 @@ namespace EventBookSystem.API.Controllers
         [HttpGet("{venueId}/sections")]
         public async Task<IActionResult> GetSectionsByVenueAsync(Guid venueId)
         {
-            var sections = await _services.VenueService.GetSectionsByVenueAsync(venueId, trackChanges: false);
+            var sections = await _services.VenueService.GetSectionsByVenueAsync(venueId);
 
             return Ok(sections);
         }
@@ -86,7 +86,7 @@ namespace EventBookSystem.API.Controllers
 
             try
             {
-                await _services.VenueService.UpdateVenueAsync(venueId, venueDto, trackChanges: true);
+                await _services.VenueService.UpdateVenueAsync(venueId, venueDto);
             }
             catch (KeyNotFoundException)
             {
@@ -106,7 +106,7 @@ namespace EventBookSystem.API.Controllers
         {
             try
             {
-                await _services.VenueService.DeleteVenueAsync(venueId, trackChanges: true);
+                await _services.VenueService.DeleteVenueAsync(venueId);
             }
             catch (KeyNotFoundException)
             {

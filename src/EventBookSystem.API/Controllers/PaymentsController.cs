@@ -21,7 +21,7 @@ namespace EventBookSystem.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllPayments()
         {
-            var payments = await _services.PaymentService.GetAllPaymentsAsync(trackChanges: false);
+            var payments = await _services.PaymentService.GetAllPaymentsAsync();
 
             return Ok(payments);
         }

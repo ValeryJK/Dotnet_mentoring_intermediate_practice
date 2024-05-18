@@ -12,8 +12,8 @@ namespace EventBookSystem.Core.Service.Services.Interfaces
 
         Task<VenueDTO> CreateVenueAsync(VenueForCreationDto venueDto);
 
-        Task UpdateVenueAsync(Guid venueId, VenueForUpdateDto venueDto, bool trackChanges = false);
+        Task UpdateVenueAsync(Guid venueId, VenueForUpdateDto venueDto, bool trackChanges = true);
 
-        Task DeleteVenueAsync(Guid venueId, bool trackChanges = false);
+        Task DeleteVenueAsync(Guid venueId, bool trackChanges = true);
     }
 }

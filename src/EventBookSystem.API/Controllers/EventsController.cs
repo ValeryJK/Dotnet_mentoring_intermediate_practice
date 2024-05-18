@@ -8,7 +8,7 @@ namespace EventBookSystem.API.Controllers
     [Route("events")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
-    [Authorize]
+    //[Authorize]
     public class EventsController : Controller
     {
         private readonly IServiceManager _services;
@@ -35,7 +35,7 @@ namespace EventBookSystem.API.Controllers
         [HttpGet("{eventId}")]
         public async Task<IActionResult> GetEventByIdAsync(Guid eventId)
         {
-            var eventDto = await _services.EventService.GetEventByIdAsync(eventId, trackChanges: false);
+            var eventDto = await _services.EventService.GetEventByIdAsync(eventId);
 
             if (eventDto == null)
                 return NotFound();
@@ -52,7 +52,7 @@ namespace EventBookSystem.API.Controllers
         [HttpGet("{eventId}/sections/{sectionId}/seats")]
         public async Task<IActionResult> GetSeatsBySection(Guid eventId, Guid sectionId)
         {
-            var seats = await _services.EventService.GetSeatsBySection(eventId, sectionId, trackChanges: false);
+            var seats = await _services.EventService.GetSeatsBySection(eventId, sectionId);
 
             return Ok(seats);
         }
@@ -87,7 +87,7 @@ namespace EventBookSystem.API.Controllers
 
             try
             {
-                await _services.EventService.UpdateEventAsync(eventId, eventDto, trackChanges: true);
+                await _services.EventService.UpdateEventAsync(eventId, eventDto);
             }
             catch (KeyNotFoundException)
             {
@@ -107,7 +107,7 @@ namespace EventBookSystem.API.Controllers
         {
             try
             {
-                await _services.EventService.DeleteEventAsync(eventId, trackChanges: true);
+                await _services.EventService.DeleteEventAsync(eventId);
             }
             catch (KeyNotFoundException)
             {
