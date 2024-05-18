@@ -4,6 +4,7 @@ using EventBookSystem.Core.Service.Services.Interfaces;
 using EventBookSystem.Data.Enums;
 using EventBookSystem.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using PaymentStatus = EventBookSystem.Data.Enums.PaymentStatus;
 
 namespace EventBookSystem.Core.Service.Services
 {

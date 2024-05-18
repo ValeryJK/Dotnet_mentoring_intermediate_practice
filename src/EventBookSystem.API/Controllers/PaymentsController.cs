@@ -1,6 +1,8 @@
-﻿using EventBookSystem.Core.Service.Services.Interfaces;
+﻿using EventBookSystem.Common.DTO;
+using EventBookSystem.Core.Service.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PaymentStatus = EventBookSystem.Common.DTO.PaymentStatus;
 
 namespace EventBookSystem.API.Controllers
 {
@@ -30,30 +32,33 @@ namespace EventBookSystem.API.Controllers
             return Ok(sections);
         }
 
-        [HttpPost("{paymentId}/complete")]
-        public async Task<IActionResult> CompletePayment(Guid paymentId)
+        [HttpPost("{paymentId}/status")]
+        public async Task<IActionResult> UpdatePaymentStatus(Guid paymentId, [FromBody] UpdatePaymentStatusDto updatePaymentStatusDto)
         {
-            var success = await _paymentService.CompletePaymentAsync(paymentId);
+            if (updatePaymentStatusDto is null)
+            {
+                return BadRequest("Invalid status update request.");
+            }
+
+            bool success;
+            switch (updatePaymentStatusDto.Status)
+            {
+                case PaymentStatus.Complete:
+                    success = await _paymentService.CompletePaymentAsync(paymentId);
+                    break;
+                case PaymentStatus.Failed:
+                    success = await _paymentService.FailPaymentAsync(paymentId);
+                    break;
+                default:
+                    return BadRequest("Invalid status value.");
+            }
 
             if (success)
             {
-                return Ok("Payment completed and seats are marked as sold.");
+                return Ok($"Payment {updatePaymentStatusDto.Status.ToString().ToLower()} successfully and seats are updated accordingly.");
             }
 
-            return BadRequest("Error.");
-        }
-
-        [HttpPost("{paymentId}/failed")]
-        public async Task<IActionResult> FailedPayment(Guid paymentId)
-        {
-            var success = await _paymentService.FailPaymentAsync(paymentId);
-
-            if (success)
-            {
-                return Ok("Payment failed and seats are marked as available.");
-            }
-
-            return BadRequest("Error.");
+            return BadRequest("Error updating payment status.");
         }
     }
 }
