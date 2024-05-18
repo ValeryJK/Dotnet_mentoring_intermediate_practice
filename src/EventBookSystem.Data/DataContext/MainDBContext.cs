@@ -32,7 +32,6 @@ namespace EventBookSystem.DAL.DataContext
                 .HasForeignKey(ci => ci.SeatId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-
             modelBuilder.Entity<Event>().Property(e => e.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<Venue>().Property(v => v.Id).ValueGeneratedOnAdd();
             modelBuilder.Entity<Section>().Property(s => s.Id).ValueGeneratedOnAdd();
@@ -64,12 +63,19 @@ namespace EventBookSystem.DAL.DataContext
         }
 
         public DbSet<Event> Events { get; set; } = null!;
+
         public DbSet<Venue> Venues { get; set; } = null!;
+
         public DbSet<Section> Sections { get; set; } = null!;
+
         public DbSet<Seat> Seats { get; set; } = null!;
+
         public DbSet<Cart> Carts { get; set; } = null!;
+
         public DbSet<CartItem> CartItems { get; set; } = null!;
+
         public DbSet<Price> Prices { get; set; } = null!;
+
         public DbSet<Payment> Payments { get; set; } = null!;
     }
 }

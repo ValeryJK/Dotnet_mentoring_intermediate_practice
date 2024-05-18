@@ -18,10 +18,16 @@ namespace EventBookSystem.API.Extensions
             })
             .AddJwtBearer(options =>
             {
+                var jwtKey = configuration["JwtKey"];
+                if (string.IsNullOrEmpty(jwtKey))
+                {
+                    throw new ArgumentNullException("JwtKey", "JWT key cannot be null or empty.");
+                }
+
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtKey"])),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     ValidIssuer = configuration["JwtSettings:ValidIssuer"],

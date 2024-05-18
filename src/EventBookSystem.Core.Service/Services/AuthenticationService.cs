@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace EventBookSystem.Core.Service.Services
@@ -76,6 +75,11 @@ namespace EventBookSystem.Core.Service.Services
 
         private async Task<List<Claim>> GetClaims()
         {
+            if (_user?.UserName is null)
+            {
+                return new List<Claim>();
+            }
+
             var claims = new List<Claim> { new Claim(ClaimTypes.Name, _user.UserName) };
             var roles = await _userManager.GetRolesAsync(_user);
 
@@ -83,6 +87,7 @@ namespace EventBookSystem.Core.Service.Services
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
+
             return claims;
         }
 
@@ -99,16 +104,6 @@ namespace EventBookSystem.Core.Service.Services
             );
 
             return tokenOptions;
-        }
-
-        private string GenerateSecureKey()
-        {
-            var keyBytes = new byte[32];
-            using (var random = RandomNumberGenerator.Create())
-            {
-                random.GetBytes(keyBytes);
-            }
-            return Convert.ToBase64String(keyBytes);
         }
     }
 }

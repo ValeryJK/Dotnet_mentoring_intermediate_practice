@@ -11,6 +11,7 @@ namespace EventBookSystem.API.Controllers
     public class AuthenticationController : Controller
     {
         private readonly IServiceManager _service;
+
         public AuthenticationController(IServiceManager service) => _service = service;
 
         /// <summary>

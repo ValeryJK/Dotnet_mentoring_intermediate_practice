@@ -21,7 +21,6 @@ namespace EventBookSystem.Core.Service
             services.AddAutoMapper(typeof(MappingCoreProfile));
 
             services.AddSingleton<ILoggerManager, LoggerManager>();
-
             services.AddScoped<IRepositoryManager, RepositoryManager>();
             services.AddScoped<IServiceManager, ServiceManager>();
 

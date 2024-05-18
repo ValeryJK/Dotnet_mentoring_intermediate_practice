@@ -20,5 +20,4 @@ namespace EventBookSystem.DAL.DataContext
             return new MainDBContext(builder.Options);
         }
     }
-
 }

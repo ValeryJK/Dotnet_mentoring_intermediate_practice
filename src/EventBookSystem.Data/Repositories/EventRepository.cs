@@ -23,7 +23,7 @@ namespace EventBookSystem.DAL.Repositories
         }
 
         public async Task<Event?> GetEventByIdAsync(Guid eventId, bool trackChanges) =>
-            await FindByCondition(e => e.Id == eventId, trackChanges).SingleOrDefaultAsync();
+            await FindAll(trackChanges).Where(x => x.Id == eventId).SingleOrDefaultAsync();
 
         public void UpdateEvent(Event eventEntity) => Update(eventEntity);
 

@@ -27,9 +27,13 @@ namespace EventBookSystem.DAL.Repositories
         }
 
         public IEventRepository Event => _eventRepository.Value;
+
         public IVenueRepository Venue => _venueRepository.Value;
+
         public ICartRepository Cart => _cartRepository.Value;
+
         public ICartItemRepository CartItem => _cartItemRepository.Value;
+
         public IPaymentRepository Payment => _paymentRepository.Value;
 
         public async Task SaveAsync() => await _dbContext.SaveChangesAsync();

@@ -24,7 +24,6 @@ namespace EventBookSystem.API
 
             builder.Services.AddScoped<ValidationFilterAttribute>();
 
-            // Add services to the container.
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(s =>
@@ -71,7 +70,6 @@ namespace EventBookSystem.API
                 });
             });
 
-            // Configure logging
             builder.Logging.AddConsole();
 
             var app = builder.Build();
@@ -83,7 +81,6 @@ namespace EventBookSystem.API
             if (app.Environment.IsProduction())
                 app.UseHsts();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();

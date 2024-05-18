@@ -22,7 +22,7 @@ namespace EventBookSystem.API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAllEvents()
         {
-            var events = await _services.EventService.GetAllEventsAsync(trackChanges: false);
+            var events = await _services.EventService.GetAllEventsAsync();
 
             return Ok(events);
         }

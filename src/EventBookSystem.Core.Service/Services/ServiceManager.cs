@@ -13,7 +13,6 @@ namespace EventBookSystem.Core.Service.Services
         private readonly Lazy<IVenueService> _venueService;
         private readonly Lazy<ICartService> _cartService;
         private readonly Lazy<IPaymentService> _paymentService;
-
         private readonly Lazy<IAuthenticationService> _authenticationService;
 
         public ServiceManager(IRepositoryManager repositoryManager, ILoggerManager logger, UserManager<User> userManager,
@@ -27,8 +26,11 @@ namespace EventBookSystem.Core.Service.Services
         }
 
         public IEventService EventService => _eventService.Value;
+
         public IVenueService VenueService => _venueService.Value;
+
         public ICartService CartService => _cartService.Value;
+
         public IPaymentService PaymentService => _paymentService.Value;
 
         public IAuthenticationService AuthenticationService => _authenticationService.Value;
