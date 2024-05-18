@@ -25,10 +25,7 @@ namespace EventBookSystem.API.Controllers
         {
             var cart = await _services.CartService.GetCartItemsByCartId(cartId);
 
-            if (cart == null)
-                return NotFound("Cart not found or empty");
-
-            return Ok(cart);
+            return cart is null ? NotFound("Cart not found or empty") : Ok(cart);
         }
 
         /// <summary>
@@ -42,7 +39,9 @@ namespace EventBookSystem.API.Controllers
         public async Task<IActionResult> AddSeatToCart(Guid cartId, [FromBody] SeatRequest payload)
         {
             if (payload is null)
+            {
                 return BadRequest("Payload is empty");
+            }
 
             var cart = await _services.CartService.AddSeatToCartAsync(cartId, payload);
 
@@ -61,12 +60,12 @@ namespace EventBookSystem.API.Controllers
         {
             var success = await _services.CartService.DeleteSeatFromCartAsync(cartId, eventId, seatId);
 
-            if (!success)
+            if (success)
             {
-                return NotFound($"The seat with id {cartId} in event {eventId} could not be found in the cart {seatId}.");
+                return NoContent();
             }
 
-            return NoContent();
+            return NotFound($"The seat with id {cartId} in event {eventId} could not be found in the cart {seatId}.");
         }
 
         /// <summary>

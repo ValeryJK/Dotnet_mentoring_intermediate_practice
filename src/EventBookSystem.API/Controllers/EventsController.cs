@@ -37,8 +37,10 @@ namespace EventBookSystem.API.Controllers
         {
             var eventDto = await _services.EventService.GetEventByIdAsync(eventId);
 
-            if (eventDto == null)
+            if (eventDto is null)
+            {
                 return NotFound();
+            }   
 
             return Ok(eventDto);
         }
@@ -66,7 +68,9 @@ namespace EventBookSystem.API.Controllers
         public async Task<IActionResult> CreateEventAsync([FromBody] EventForCreationDto eventDto)
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }               
 
             var createdEvent = await _services.EventService.CreateEventAsync(eventDto);
 
@@ -83,7 +87,9 @@ namespace EventBookSystem.API.Controllers
         public async Task<IActionResult> UpdateEventAsync(Guid eventId, [FromBody] EventForUpdateDto eventDto)
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }                
 
             try
             {

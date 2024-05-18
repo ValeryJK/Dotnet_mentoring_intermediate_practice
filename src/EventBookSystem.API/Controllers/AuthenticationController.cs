@@ -25,17 +25,17 @@ namespace EventBookSystem.API.Controllers
         {
             var result = await _service.AuthenticationService.RegisterUser(userForRegistration);
 
-            if (!result.Succeeded)
+            if (result.Succeeded)
             {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.TryAddModelError(error.Code, error.Description);
-                }
-
-                return BadRequest(ModelState);
+                return StatusCode(StatusCodes.Status201Created);
             }
 
-            return StatusCode(StatusCodes.Status201Created);
+            foreach (var error in result.Errors)
+            {
+                ModelState.TryAddModelError(error.Code, error.Description);
+            }
+
+            return BadRequest(ModelState);
         }
 
         /// <summary>
@@ -47,13 +47,12 @@ namespace EventBookSystem.API.Controllers
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto user)
         {
-            if (!await _service.AuthenticationService.ValidateUser(user))
-                return Unauthorized();
-
-            return Ok(new
+            if (await _service.AuthenticationService.ValidateUser(user))
             {
-                Token = await _service.AuthenticationService.CreateToken()
-            });
+                return Ok(new { Token = await _service.AuthenticationService.CreateToken() });
+            }
+
+            return BadRequest(StatusCodes.Status404NotFound);
         }
     }
 }

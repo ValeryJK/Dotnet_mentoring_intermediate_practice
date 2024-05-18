@@ -49,12 +49,12 @@ namespace EventBookSystem.API.Controllers
         {
             var success = await _services.PaymentService.CompletePaymentAsync(paymentId);
 
-            if (!success)
+            if (success)
             {
-                return BadRequest("Error.");
+                return Ok("Payment completed successfully and seats are marked as sold.");
             }
 
-            return Ok("Payment completed successfully and seats are marked as sold.");
+            return BadRequest("Error.");
         }
 
         /// <summary>
@@ -67,12 +67,12 @@ namespace EventBookSystem.API.Controllers
         {
             var success = await _services.PaymentService.FailPaymentAsync(paymentId);
 
-            if (!success)
+            if (success)
             {
-                return BadRequest("Error.");
+                return Ok("Payment failed successfully and seats are marked as available.");
             }
 
-            return Ok("Payment failed successfully and seats are marked as available.");
+            return BadRequest("Error.");
         }
     }
 }
