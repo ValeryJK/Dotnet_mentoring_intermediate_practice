@@ -24,11 +24,5 @@ namespace EventBookSystem.DAL.Repositories
 
         public async Task<Event?> GetEventByIdAsync(Guid eventId, bool trackChanges) =>
             await FindAll(trackChanges).Where(x => x.Id == eventId).SingleOrDefaultAsync();
-
-        public void UpdateEvent(Event eventEntity) => Update(eventEntity);
-
-        public void CreateEvent(Event eventEntity) => Create(eventEntity);
-
-        public void DeleteEvent(Event eventEntity) => Delete(eventEntity);
     }
 }

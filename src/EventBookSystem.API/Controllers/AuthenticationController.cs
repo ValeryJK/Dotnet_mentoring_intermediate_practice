@@ -10,17 +10,17 @@ namespace EventBookSystem.API.Controllers
     [ApiExplorerSettings(GroupName = "v1")]
     public class AuthenticationController : Controller
     {
-        private readonly IServiceManager _service;
+        private readonly IAuthenticationService _authenticationService;
 
-        public AuthenticationController(IServiceManager service) => _service = service;
+        public AuthenticationController(IAuthenticationService authenticationService) => _authenticationService = authenticationService;
 
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto user)
         {
-            if (await _service.AuthenticationService.ValidateUser(user))
+            if (await _authenticationService.ValidateUser(user))
             {
-                return Ok(new { Token = await _service.AuthenticationService.CreateToken() });
+                return Ok(new { Token = await _authenticationService.CreateToken() });
             }
 
             return BadRequest(StatusCodes.Status404NotFound);

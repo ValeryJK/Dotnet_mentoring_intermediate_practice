@@ -1,6 +1,9 @@
 ﻿using EventBookSystem.DAL.DataContext;
 using EventBookSystem.DAL.Repositories;
+using EventBookSystem.DAL.Repositories.Interfaces;
 using EventBookSystem.Data.Entities;
+using EventBookSystem.Data.Repositories.Interfaces;
+using EventBookSystem.Data.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,7 +24,11 @@ namespace EventBookSystem.DAL
                 services.AddDbContext<MainDBContext>(opts => opts.UseSqlServer(configuration.GetConnectionString("DbConnection")));
             }
 
-            services.AddScoped<IRepositoryManager, RepositoryManager>();
+            services.AddScoped<IEventRepository, EventRepository>();
+            services.AddScoped<IVenueRepository, VenueRepository>();
+            services.AddScoped<ICartRepository, CartRepository>();
+            services.AddScoped<ICartItemRepository, CartItemRepository>();
+            services.AddScoped<IPaymentRepository, PaymentRepository>();
 
             return services;
         }

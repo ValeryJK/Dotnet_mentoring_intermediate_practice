@@ -21,5 +21,7 @@ namespace EventBookSystem.DAL.Repositories
         public void Update(TEntity entity) => _context.Set<TEntity>().Update(entity);
 
         public void Delete(TEntity entity) => _context.Set<TEntity>().Remove(entity);
+
+        public async Task SaveAsync() => await _context.SaveChangesAsync();
     }
 }

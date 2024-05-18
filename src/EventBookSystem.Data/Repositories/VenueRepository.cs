@@ -20,11 +20,5 @@ namespace EventBookSystem.DAL.Repositories
 
         public async Task<Venue?> GetVenueByIdAsync(Guid venueId, bool trackChanges) =>
            await FindAll(trackChanges).Where(x => x.Id == venueId).SingleOrDefaultAsync();
-
-        public void UpdateVenue(Venue venueEntity) => Update(venueEntity);
-
-        public void CreateVenue(Venue venueEntity) => Create(venueEntity);
-
-        public void DeleteVenue(Venue venueEntity) => Delete(venueEntity);
     }
 }

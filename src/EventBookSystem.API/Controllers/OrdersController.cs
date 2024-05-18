@@ -11,14 +11,14 @@ namespace EventBookSystem.API.Controllers
     [Authorize]
     public class OrdersController : Controller
     {
-        private readonly IServiceManager _services;
+        private readonly ICartService _cartService;
 
-        public OrdersController(IServiceManager service) => _services = service;
+        public OrdersController(ICartService cartService) => _cartService = cartService;
 
         [HttpGet("{cartId}")]
         public async Task<IActionResult> GetCartItemsByCartId(Guid cartId)
         {
-            var cart = await _services.CartService.GetCartItemsByCartId(cartId);
+            var cart = await _cartService.GetCartItemsByCartId(cartId);
 
             return cart is null ? NotFound("Cart not found or empty") : Ok(cart);
         }
@@ -31,7 +31,7 @@ namespace EventBookSystem.API.Controllers
                 return BadRequest("Payload is empty");
             }
 
-            var cart = await _services.CartService.AddSeatToCartAsync(cartId, payload);
+            var cart = await _cartService.AddSeatToCartAsync(cartId, payload);
 
             return Ok(cart);
         }
@@ -39,7 +39,7 @@ namespace EventBookSystem.API.Controllers
         [HttpDelete("{cartId}/events/{eventId}/seats/{seatId}")]
         public async Task<IActionResult> DeleteSeatFromCart(Guid cartId, Guid eventId, Guid seatId)
         {
-            var success = await _services.CartService.DeleteSeatFromCartAsync(cartId, eventId, seatId);
+            var success = await _cartService.DeleteSeatFromCartAsync(cartId, eventId, seatId);
 
             if (success)
             {
@@ -52,7 +52,7 @@ namespace EventBookSystem.API.Controllers
         [HttpPost("{cartId}/book")]
         public async Task<IActionResult> BookCart(Guid cartId)
         {
-            var paymentId = await _services.CartService.BookCartAsync(cartId);
+            var paymentId = await _cartService.BookCartAsync(cartId);
 
             if (paymentId == null)
             {

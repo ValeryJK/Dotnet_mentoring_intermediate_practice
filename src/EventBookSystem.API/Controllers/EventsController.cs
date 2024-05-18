@@ -8,17 +8,17 @@ namespace EventBookSystem.API.Controllers
     [Route("events")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
-    [Authorize]
+    //[Authorize]
     public class EventsController : Controller
     {
-        private readonly IServiceManager _services;
+        private readonly IEventService _eventService;
 
-        public EventsController(IServiceManager service) => _services = service;
+        public EventsController(IEventService eventService) => _eventService = eventService;
 
         [HttpGet]
         public async Task<IActionResult> GetAllEvents()
         {
-            var events = await _services.EventService.GetAllEventsAsync();
+            var events = await _eventService.GetAllEventsAsync();
 
             return Ok(events);
         }
@@ -26,7 +26,7 @@ namespace EventBookSystem.API.Controllers
         [HttpGet("{eventId}")]
         public async Task<IActionResult> GetEventByIdAsync(Guid eventId)
         {
-            var eventDto = await _services.EventService.GetEventByIdAsync(eventId);
+            var eventDto = await _eventService.GetEventByIdAsync(eventId);
 
             if (eventDto is null)
             {
@@ -39,7 +39,7 @@ namespace EventBookSystem.API.Controllers
         [HttpGet("{eventId}/sections/{sectionId}/seats")]
         public async Task<IActionResult> GetSeatsBySection(Guid eventId, Guid sectionId)
         {
-            var seats = await _services.EventService.GetSeatsBySection(eventId, sectionId);
+            var seats = await _eventService.GetSeatsBySection(eventId, sectionId);
 
             return Ok(seats);
         }
@@ -52,7 +52,7 @@ namespace EventBookSystem.API.Controllers
                 return BadRequest(ModelState);
             }               
 
-            var createdEvent = await _services.EventService.CreateEventAsync(eventDto);
+            var createdEvent = await _eventService.CreateEventAsync(eventDto);
 
             return Ok(createdEvent);
         }
@@ -67,7 +67,7 @@ namespace EventBookSystem.API.Controllers
 
             try
             {
-                await _services.EventService.UpdateEventAsync(eventId, eventDto);
+                await _eventService.UpdateEventAsync(eventId, eventDto);
             }
             catch (KeyNotFoundException)
             {
@@ -82,7 +82,7 @@ namespace EventBookSystem.API.Controllers
         {
             try
             {
-                await _services.EventService.DeleteEventAsync(eventId);
+                await _eventService.DeleteEventAsync(eventId);
             }
             catch (KeyNotFoundException)
             {

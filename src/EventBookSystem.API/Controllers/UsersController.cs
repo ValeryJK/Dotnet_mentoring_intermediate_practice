@@ -12,15 +12,15 @@ namespace EventBookSystem.API.Controllers
     [Authorize]
     public class UsersController : Controller
     {
-        private readonly IServiceManager _service;
+        private readonly IAuthenticationService _authorizationService;
 
-        public UsersController(IServiceManager service) => _service = service;
+        public UsersController(IAuthenticationService authorizationService) => _authorizationService = authorizationService;
 
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> RegisterUser([FromBody] UserForRegistrationDto userForRegistration)
         {
-            var result = await _service.AuthenticationService.RegisterUser(userForRegistration);
+            var result = await _authorizationService.RegisterUser(userForRegistration);
 
             if (result.Succeeded)
             {

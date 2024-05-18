@@ -2,35 +2,40 @@
 using EventBookSystem.Common.DTO;
 using EventBookSystem.Common.Models;
 using EventBookSystem.Core.Service.Services.Interfaces;
-using EventBookSystem.DAL.Repositories;
 using EventBookSystem.Data.Entities;
 using EventBookSystem.Data.Enums;
+using EventBookSystem.Data.Repositories.Interfaces;
 
 namespace EventBookSystem.Core.Service.Services
 {
     public class CartService : ICartService
     {
-        private readonly IRepositoryManager _repository;
+        private readonly ICartRepository _cartRepository;
+        private readonly ICartItemRepository _cartItemRepository;
+        private readonly IPaymentRepository _paymentRepository;
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
 
-        public CartService(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
+        public CartService(ICartRepository cartRepository, ICartItemRepository cartItemRepository, IPaymentRepository paymentRepository,
+            ILoggerManager logger, IMapper mapper)
         {
-            _repository = repository;
+            _cartRepository = cartRepository;
+            _cartItemRepository = cartItemRepository;
+            _paymentRepository = paymentRepository;
             _logger = logger;
             _mapper = mapper;
         }
 
         public async Task<IEnumerable<CartItemDto>> GetCartItemsByCartId(Guid cartId, bool trackChanges)
         {
-            var cartItems = await _repository.Cart.GetCartItemsByCartId(cartId);
+            var cartItems = await _cartRepository.GetCartItemsByCartId(cartId);
 
             return _mapper.Map<IEnumerable<CartItemDto>>(cartItems);
         }
 
         public async Task<CartDto?> AddSeatToCartAsync(Guid cartId, SeatRequest payload)
         {
-            var cart = await _repository.Cart.GetCartById(cartId);
+            var cart = await _cartRepository.GetCartById(cartId);
 
             if (cart == null || cart.CartItems.Any(x => x.SeatId == payload.SeatId
                 && x.EventId == payload.EventId))
@@ -47,17 +52,17 @@ namespace EventBookSystem.Core.Service.Services
                 DateUTC = DateTime.UtcNow,
             };
 
-            _repository.CartItem.Create(cartItem);
-            await _repository.SaveAsync();
+            _cartItemRepository.Create(cartItem);
+            await _cartItemRepository.SaveAsync();
 
-            var updatedCart = await _repository.Cart.GetCartById(cartId);
+            var updatedCart = await _cartRepository.GetCartById(cartId);
 
             return _mapper.Map<CartDto>(updatedCart);
         }
 
         public async Task<Guid?> BookCartAsync(Guid cartId)
         {
-            var cart = await _repository.Cart.GetCartById(cartId);
+            var cart = await _cartRepository.GetCartById(cartId);
 
             if (cart == null || !cart.CartItems.Any())
             {
@@ -73,7 +78,7 @@ namespace EventBookSystem.Core.Service.Services
                 DateUTC = DateTime.UtcNow
             };
 
-            _repository.Payment.Create(payment);
+            _paymentRepository.Create(payment);
 
             foreach (var item in cart.CartItems)
             {
@@ -81,21 +86,21 @@ namespace EventBookSystem.Core.Service.Services
                 item.PaymentId = payment.Id;
             }
 
-            await _repository.SaveAsync();
+            await _paymentRepository.SaveAsync();
 
             return payment.Id;
         }
 
         public async Task<bool> DeleteSeatFromCartAsync(Guid cartId, Guid eventId, Guid seatId)
         {
-            var cartItems = await _repository.Cart.GetCartItemsByCartId(cartId);
+            var cartItems = await _cartRepository.GetCartItemsByCartId(cartId);
             var cartItem = cartItems.FirstOrDefault(x => x.CartId == cartId
                 && x.SeatId == seatId && x.EventId == eventId);
 
             if (cartItem != null)
             {
-                _repository.CartItem.Delete(cartItem);
-                await _repository.SaveAsync();
+                _cartItemRepository.Delete(cartItem);
+                await _cartItemRepository.SaveAsync();
 
                 return true;
             }

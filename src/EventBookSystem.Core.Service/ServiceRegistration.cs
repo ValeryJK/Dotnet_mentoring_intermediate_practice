@@ -2,7 +2,6 @@
 using EventBookSystem.Core.Service.Services;
 using EventBookSystem.Core.Service.Services.Interfaces;
 using EventBookSystem.DAL;
-using EventBookSystem.DAL.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,8 +20,12 @@ namespace EventBookSystem.Core.Service
             services.AddAutoMapper(typeof(MappingCoreProfile));
 
             services.AddSingleton<ILoggerManager, LoggerManager>();
-            services.AddScoped<IRepositoryManager, RepositoryManager>();
-            services.AddScoped<IServiceManager, ServiceManager>();
+
+            services.AddScoped<IEventService, EventService>();
+            services.AddScoped<IVenueService, VenueService>();
+            services.AddScoped<ICartService, CartService>();
+            services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
 
             return services;
         }

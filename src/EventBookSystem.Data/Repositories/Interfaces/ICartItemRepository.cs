@@ -1,13 +1,9 @@
-﻿using EventBookSystem.Data.Entities;
+﻿using EventBookSystem.DAL.Repositories;
+using EventBookSystem.Data.Entities;
 
 namespace EventBookSystem.Data.Repositories.Interfaces
 {
-    public interface ICartItemRepository
+    public interface ICartItemRepository : IRepositoryBase<CartItem>
     {
-        void Create(CartItem cartItem);
-
-        void Update(CartItem cartItem);
-
-        void Delete(CartItem cartItem);
     }
 }

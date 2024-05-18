@@ -11,14 +11,14 @@ namespace EventBookSystem.API.Controllers
     [Authorize]
     public class VenuesController : Controller
     {
-        private readonly IServiceManager _services;
+        private readonly IVenueService _venueService;
 
-        public VenuesController(IServiceManager service) => _services = service;
+        public VenuesController(IVenueService venueService) => _venueService = venueService;
 
         [HttpGet]
         public async Task<IActionResult> GetAllVenues()
         {
-            var venues = await _services.VenueService.GetAllVenuesAsync();
+            var venues = await _venueService.GetAllVenuesAsync();
 
             return Ok(venues);
         }
@@ -26,7 +26,7 @@ namespace EventBookSystem.API.Controllers
         [HttpGet("{venueId}")]
         public async Task<IActionResult> GetVenueByIdAsync(Guid venueId)
         {
-            var venueDto = await _services.VenueService.GetVenueByIdAsync(venueId);
+            var venueDto = await _venueService.GetVenueByIdAsync(venueId);
 
             if (venueDto == null)
                 return NotFound();
@@ -37,7 +37,7 @@ namespace EventBookSystem.API.Controllers
         [HttpGet("{venueId}/sections")]
         public async Task<IActionResult> GetSectionsByVenueAsync(Guid venueId)
         {
-            var sections = await _services.VenueService.GetSectionsByVenueAsync(venueId);
+            var sections = await _venueService.GetSectionsByVenueAsync(venueId);
 
             return Ok(sections);
         }
@@ -48,7 +48,7 @@ namespace EventBookSystem.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var createdVenue = await _services.VenueService.CreateVenueAsync(venueDto);
+            var createdVenue = await _venueService.CreateVenueAsync(venueDto);
 
             return Ok(createdVenue);
         }
@@ -61,7 +61,7 @@ namespace EventBookSystem.API.Controllers
 
             try
             {
-                await _services.VenueService.UpdateVenueAsync(venueId, venueDto);
+                await _venueService.UpdateVenueAsync(venueId, venueDto);
             }
             catch (KeyNotFoundException)
             {
@@ -76,7 +76,7 @@ namespace EventBookSystem.API.Controllers
         {
             try
             {
-                await _services.VenueService.DeleteVenueAsync(venueId);
+                await _venueService.DeleteVenueAsync(venueId);
             }
             catch (KeyNotFoundException)
             {

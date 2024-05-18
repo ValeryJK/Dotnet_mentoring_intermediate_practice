@@ -10,14 +10,14 @@ namespace EventBookSystem.API.Controllers
     [Authorize]
     public class PaymentsController : Controller
     {
-        private readonly IServiceManager _services;
+        private readonly IPaymentService _paymentService;
 
-        public PaymentsController(IServiceManager service) => _services = service;
+        public PaymentsController(IPaymentService paymentService) => _paymentService = paymentService;
 
         [HttpGet]
         public async Task<IActionResult> GetAllPayments()
         {
-            var payments = await _services.PaymentService.GetAllPaymentsAsync();
+            var payments = await _paymentService.GetAllPaymentsAsync();
 
             return Ok(payments);
         }
@@ -25,7 +25,7 @@ namespace EventBookSystem.API.Controllers
         [HttpGet("{paymentId}")]
         public async Task<IActionResult> GetPaymentByIdAsync(Guid paymentId)
         {
-            var sections = await _services.PaymentService.GetPaymentByIdAsync(paymentId);
+            var sections = await _paymentService.GetPaymentByIdAsync(paymentId);
 
             return Ok(sections);
         }
@@ -33,7 +33,7 @@ namespace EventBookSystem.API.Controllers
         [HttpPost("{paymentId}/complete")]
         public async Task<IActionResult> CompletePayment(Guid paymentId)
         {
-            var success = await _services.PaymentService.CompletePaymentAsync(paymentId);
+            var success = await _paymentService.CompletePaymentAsync(paymentId);
 
             if (success)
             {
@@ -46,7 +46,7 @@ namespace EventBookSystem.API.Controllers
         [HttpPost("{paymentId}/failed")]
         public async Task<IActionResult> FailedPayment(Guid paymentId)
         {
-            var success = await _services.PaymentService.FailPaymentAsync(paymentId);
+            var success = await _paymentService.FailPaymentAsync(paymentId);
 
             if (success)
             {

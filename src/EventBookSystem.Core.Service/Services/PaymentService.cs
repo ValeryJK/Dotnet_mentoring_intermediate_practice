@@ -1,34 +1,37 @@
 ﻿using AutoMapper;
 using EventBookSystem.Common.DTO;
 using EventBookSystem.Core.Service.Services.Interfaces;
-using EventBookSystem.DAL.Repositories;
 using EventBookSystem.Data.Enums;
+using EventBookSystem.Data.Repositories.Interfaces;
 
 namespace EventBookSystem.Core.Service.Services
 {
     public class PaymentService : IPaymentService
     {
-        private readonly IRepositoryManager _repository;
+        private readonly ICartRepository _cartRepository;
+        private readonly IPaymentRepository _paymentRepository;
         private readonly ILoggerManager _logger;
         private readonly IMapper _mapper;
 
-        public PaymentService(IRepositoryManager repository, ILoggerManager logger, IMapper mapper)
+        public PaymentService(IPaymentRepository paymentRepository, ICartRepository cartRepository,
+            ILoggerManager logger, IMapper mapper)
         {
-            _repository = repository;
+            _cartRepository = cartRepository;
+            _paymentRepository = paymentRepository;
             _logger = logger;
             _mapper = mapper;
         }
 
         public async Task<IEnumerable<PaymentDto>> GetAllPaymentsAsync(bool trackChanges)
         {
-            var payments = await _repository.Payment.GetAllPaymentsAsync(trackChanges);
+            var payments = await _paymentRepository.GetAllPaymentsAsync(trackChanges);
 
             return _mapper.Map<IEnumerable<PaymentDto>>(payments);
         }
 
         public async Task<PaymentDto?> GetPaymentByIdAsync(Guid paymentId)
         {
-            var payment = await _repository.Payment.GetPaymentByIdAsync(paymentId);
+            var payment = await _paymentRepository.GetPaymentByIdAsync(paymentId);
 
             if (payment == null)
             {
@@ -42,8 +45,8 @@ namespace EventBookSystem.Core.Service.Services
 
         public async Task<bool> CompletePaymentAsync(Guid paymentId)
         {
-            var payment = await _repository.Payment.GetPaymentByIdAsync(paymentId);
-            var cartsItems = await _repository.Cart.GetCartItemsByPaymentId(paymentId);
+            var payment = await _paymentRepository.GetPaymentByIdAsync(paymentId);
+            var cartsItems = await _cartRepository.GetCartItemsByPaymentId(paymentId);
 
             if (!cartsItems.Any())
             {
@@ -57,15 +60,15 @@ namespace EventBookSystem.Core.Service.Services
 
             payment.Status = PaymentStatus.Paid;
 
-            await _repository.SaveAsync();
+            await _paymentRepository.SaveAsync();
 
             return true;
         }
 
         public async Task<bool> FailPaymentAsync(Guid paymentId)
         {
-            var payment = await _repository.Payment.GetPaymentByIdAsync(paymentId);
-            var cartsItems = await _repository.Cart.GetCartItemsByPaymentId(paymentId);
+            var payment = await _paymentRepository.GetPaymentByIdAsync(paymentId);
+            var cartsItems = await _cartRepository.GetCartItemsByPaymentId(paymentId);
 
             if (!cartsItems.Any())
             {
@@ -79,7 +82,7 @@ namespace EventBookSystem.Core.Service.Services
 
             payment.Status = PaymentStatus.Failed;
 
-            await _repository.SaveAsync();
+            await _paymentRepository.SaveAsync();
 
             return true;
         }
