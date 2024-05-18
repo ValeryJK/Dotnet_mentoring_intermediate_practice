@@ -3,6 +3,7 @@ using EventBookSystem.Common.DTO;
 using EventBookSystem.Core.Service.Services.Interfaces;
 using EventBookSystem.Data.Enums;
 using EventBookSystem.Data.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventBookSystem.Core.Service.Services
 {
@@ -24,14 +25,14 @@ namespace EventBookSystem.Core.Service.Services
 
         public async Task<IEnumerable<PaymentDto>> GetAllPaymentsAsync(bool trackChanges)
         {
-            var payments = await _paymentRepository.GetAllPaymentsAsync(trackChanges);
+            var payments = await _paymentRepository.GetAll(trackChanges).OrderBy(c => c.DateUTC).ToListAsync();
 
             return _mapper.Map<IEnumerable<PaymentDto>>(payments);
         }
 
-        public async Task<PaymentDto?> GetPaymentByIdAsync(Guid paymentId)
+        public async Task<PaymentDto?> GetPaymentByIdAsync(Guid paymentId, bool trackChanges)
         {
-            var payment = await _paymentRepository.GetPaymentByIdAsync(paymentId);
+            var payment = await _paymentRepository.GetAll(false).FirstAsync(x => x.Id == paymentId);
 
             if (payment == null)
             {
@@ -43,7 +44,7 @@ namespace EventBookSystem.Core.Service.Services
             return _mapper.Map<PaymentDto>(payment);
         }
 
-        public async Task<bool> CompletePaymentAsync(Guid paymentId)
+        public async Task<bool> CompletePaymentAsync(Guid paymentId, bool trackChanges)
         {
             var payment = await _paymentRepository.GetPaymentByIdAsync(paymentId);
             var cartsItems = await _cartRepository.GetCartItemsByPaymentId(paymentId);
@@ -65,7 +66,7 @@ namespace EventBookSystem.Core.Service.Services
             return true;
         }
 
-        public async Task<bool> FailPaymentAsync(Guid paymentId)
+        public async Task<bool> FailPaymentAsync(Guid paymentId, bool trackChanges)
         {
             var payment = await _paymentRepository.GetPaymentByIdAsync(paymentId);
             var cartsItems = await _cartRepository.GetCartItemsByPaymentId(paymentId);

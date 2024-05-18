@@ -4,7 +4,7 @@ namespace EventBookSystem.DAL.Repositories
 {
     public interface IRepositoryBase<TEntity> where TEntity : IEntity
     {
-        IQueryable<TEntity> FindAll(bool trackChanges);
+        IQueryable<TEntity> GetAll(bool trackChanges);
 
         void Create(TEntity entity);
 

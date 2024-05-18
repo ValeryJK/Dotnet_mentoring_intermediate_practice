@@ -13,7 +13,7 @@ namespace EventBookSystem.DAL.Repositories
             _context = context;
         }
 
-        public IQueryable<TEntity> FindAll(bool trackChanges) =>
+        public IQueryable<TEntity> GetAll(bool trackChanges) =>
             !trackChanges ? _context.Set<TEntity>().AsNoTracking() : _context.Set<TEntity>();
 
         public void Create(TEntity entity) => _context.Set<TEntity>().Add(entity);

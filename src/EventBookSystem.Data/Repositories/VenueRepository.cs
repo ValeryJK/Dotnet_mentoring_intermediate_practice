@@ -11,7 +11,7 @@ namespace EventBookSystem.DAL.Repositories
         public VenueRepository(MainDBContext context) : base(context) { }
 
         public async Task<IEnumerable<Venue>> GetAllVenuesAsync(bool trackChanges) =>
-          await FindAll(trackChanges).OrderBy(c => c.Name).ToListAsync();
+          await GetAll(trackChanges).OrderBy(c => c.Name).ToListAsync();
 
         public async Task<IEnumerable<Section>> GetSectionsByVenueAsync(Guid venueId, bool trackChanges)
         {
@@ -19,6 +19,6 @@ namespace EventBookSystem.DAL.Repositories
         }
 
         public async Task<Venue?> GetVenueByIdAsync(Guid venueId, bool trackChanges) =>
-           await FindAll(trackChanges).Where(x => x.Id == venueId).SingleOrDefaultAsync();
+           await GetAll(trackChanges).Where(x => x.Id == venueId).SingleOrDefaultAsync();
     }
 }

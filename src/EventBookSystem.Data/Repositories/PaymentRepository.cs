@@ -10,9 +10,6 @@ namespace EventBookSystem.Data.Repositories
     {
         public PaymentRepository(MainDBContext context) : base(context) { }
 
-        public async Task<IEnumerable<Payment>> GetAllPaymentsAsync(bool trackChanges) =>
-           await FindAll(trackChanges).OrderBy(c => c.DateUTC).ToListAsync();
-
         public async Task<Payment> GetPaymentByIdAsync(Guid paymentId)
         {
             return await _context.Payments.FirstAsync(x => x.Id == paymentId);

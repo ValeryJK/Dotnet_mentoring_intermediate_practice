@@ -12,7 +12,7 @@ namespace EventBookSystem.DAL.Repositories
 
 
         public async Task<IEnumerable<Event>> GetAllEventsAsync(bool trackChanges) =>
-           await FindAll(trackChanges).OrderBy(c => c.Name).ToListAsync();
+           await GetAll(trackChanges).OrderBy(c => c.Name).ToListAsync();
 
         public async Task<IEnumerable<Seat>> GetSeatsBySection(Guid eventId, Guid sectionId, bool trackChanges)
         {
@@ -23,6 +23,6 @@ namespace EventBookSystem.DAL.Repositories
         }
 
         public async Task<Event?> GetEventByIdAsync(Guid eventId, bool trackChanges) =>
-            await FindAll(trackChanges).Where(x => x.Id == eventId).SingleOrDefaultAsync();
+            await GetAll(trackChanges).Where(x => x.Id == eventId).SingleOrDefaultAsync();
     }
 }

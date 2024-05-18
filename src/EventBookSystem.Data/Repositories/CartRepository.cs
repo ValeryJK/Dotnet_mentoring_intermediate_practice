@@ -12,7 +12,7 @@ namespace EventBookSystem.Data.Repositories
 
 
         public async Task<IEnumerable<Cart>> GetAllCartsAsync(bool trackChanges) =>
-           await FindAll(trackChanges).ToListAsync();
+           await GetAll(trackChanges).ToListAsync();
 
         public async Task<Cart> GetCartById(Guid cartId)
         {
