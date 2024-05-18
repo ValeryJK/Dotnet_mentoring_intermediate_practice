@@ -49,7 +49,7 @@ namespace EventBookSystem.API.Controllers
             return NotFound($"The seat with id {cartId} in event {eventId} could not be found in the cart {seatId}.");
         }
 
-        [HttpPut("{cartId}/book")]
+        [HttpPost("{cartId}/book")]
         public async Task<IActionResult> BookCart(Guid cartId)
         {
             var paymentId = await _services.CartService.BookCartAsync(cartId);

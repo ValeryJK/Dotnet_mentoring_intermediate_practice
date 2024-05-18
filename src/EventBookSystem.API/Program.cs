@@ -3,7 +3,7 @@ using EventBookSystem.API.Extensions;
 using EventBookSystem.Core.Service;
 using EventBookSystem.Core.Service.Services.Interfaces;
 using Microsoft.OpenApi.Models;
-using NLog.Web;
+using Serilog;
 using System.Reflection;
 
 namespace EventBookSystem.API
@@ -14,9 +14,17 @@ namespace EventBookSystem.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
+                .Enrich.FromLogContext()
+                .WriteTo.Console()
+                .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+
+            builder.Host.UseSerilog();
+
             builder.Logging.ClearProviders();
-            builder.Logging.SetMinimumLevel(LogLevel.Error);
-            builder.Host.UseNLog();
+            builder.Logging.SetMinimumLevel(LogLevel.Warning);
 
             builder.Services.AddAuthentication();
             builder.Services.AddCoreServices(builder.Configuration);

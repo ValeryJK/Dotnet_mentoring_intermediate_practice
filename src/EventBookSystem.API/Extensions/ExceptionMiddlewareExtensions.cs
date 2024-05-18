@@ -17,16 +17,18 @@ namespace EventBookSystem.API.Extensions
                     context.Response.ContentType = "application/json";
 
                     var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
+                    var errorMessage = "Internal Server Error.";
+
                     if (contextFeature != null)
                     {
                         logger.LogError($"Something went wrong: {contextFeature.Error}");
-
-                        await context.Response.WriteAsync(new ErrorDetails()
-                        {
-                            StatusCode = context.Response.StatusCode,
-                            Message = "Internal Server Error.",
-                        }.ToString());
                     }
+
+                    await context.Response.WriteAsync(new ErrorDetails()
+                    {
+                        StatusCode = context.Response.StatusCode,
+                        Message = errorMessage,
+                    }.ToString());
                 });
             });
         }

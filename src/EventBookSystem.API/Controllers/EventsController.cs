@@ -8,7 +8,7 @@ namespace EventBookSystem.API.Controllers
     [Route("events")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
-    //[Authorize]
+    [Authorize]
     public class EventsController : Controller
     {
         private readonly IServiceManager _services;
