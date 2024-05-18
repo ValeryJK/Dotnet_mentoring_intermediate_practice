@@ -4,6 +4,7 @@ using EventBookSystem.Core.Service.Services.Interfaces;
 using EventBookSystem.Data.Enums;
 using EventBookSystem.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using PaymentStatus = EventBookSystem.Data.Enums.PaymentStatus;
 
 namespace EventBookSystem.Core.Service.Services
@@ -12,11 +13,11 @@ namespace EventBookSystem.Core.Service.Services
     {
         private readonly ICartRepository _cartRepository;
         private readonly IPaymentRepository _paymentRepository;
-        private readonly ILoggerManager _logger;
+        private readonly ILogger<PaymentService> _logger;
         private readonly IMapper _mapper;
 
         public PaymentService(IPaymentRepository paymentRepository, ICartRepository cartRepository,
-            ILoggerManager logger, IMapper mapper)
+            ILogger<PaymentService> logger, IMapper mapper)
         {
             _cartRepository = cartRepository;
             _paymentRepository = paymentRepository;
@@ -33,14 +34,7 @@ namespace EventBookSystem.Core.Service.Services
 
         public async Task<PaymentDto?> GetPaymentByIdAsync(Guid paymentId, bool trackChanges)
         {
-            var payment = await _paymentRepository.GetAll(false).FirstAsync(x => x.Id == paymentId);
-
-            if (payment == null)
-            {
-                _logger.LogWarn($"Payment with ID {paymentId} not found.");
-
-                return default;
-            }
+            var payment = await _paymentRepository.GetAll(trackChanges).FirstOrDefaultAsync(x => x.Id == paymentId);
 
             return _mapper.Map<PaymentDto>(payment);
         }

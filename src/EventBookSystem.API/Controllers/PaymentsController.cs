@@ -37,7 +37,7 @@ namespace EventBookSystem.API.Controllers
         {
             if (updatePaymentStatusDto is null)
             {
-                return BadRequest("Invalid status update request.");
+                return BadRequest("Invalid update payment status.");
             }
 
             bool success;

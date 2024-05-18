@@ -3,16 +3,17 @@ using EventBookSystem.Common.DTO;
 using EventBookSystem.Core.Service.Services.Interfaces;
 using EventBookSystem.DAL.Entities;
 using EventBookSystem.DAL.Repositories.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace EventBookSystem.Core.Service.Services
 {
     public sealed class VenueService : IVenueService
     {
         private readonly IVenueRepository _venueRepository;
-        private readonly ILoggerManager _logger;
+        private readonly ILogger<VenueService> _logger;
         private readonly IMapper _mapper;
 
-        public VenueService(IVenueRepository venueRepository, ILoggerManager logger, IMapper mapper)
+        public VenueService(IVenueRepository venueRepository, ILogger<VenueService> logger, IMapper mapper)
         {
             _venueRepository = venueRepository;
             _logger = logger;

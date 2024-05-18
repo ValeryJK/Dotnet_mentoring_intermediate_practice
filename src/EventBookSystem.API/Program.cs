@@ -82,7 +82,7 @@ namespace EventBookSystem.API
 
             var app = builder.Build();
 
-            var logger = app.Services.GetRequiredService<ILoggerManager>();
+            var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
             app.ConfigureExceptionHandler(logger);
 

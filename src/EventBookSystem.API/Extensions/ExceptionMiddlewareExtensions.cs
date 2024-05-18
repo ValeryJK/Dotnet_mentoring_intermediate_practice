@@ -7,7 +7,7 @@ namespace EventBookSystem.API.Extensions
 {
     public static class ExceptionMiddlewareExtensions
     {
-        public static void ConfigureExceptionHandler(this WebApplication app, ILoggerManager logger)
+        public static void ConfigureExceptionHandler(this WebApplication app, ILogger<Program> logger)
         {
             app.UseExceptionHandler(appError =>
             {

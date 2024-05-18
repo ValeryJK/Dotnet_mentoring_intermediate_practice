@@ -5,6 +5,7 @@ using EventBookSystem.Core.Service.Services.Interfaces;
 using EventBookSystem.Data.Entities;
 using EventBookSystem.Data.Enums;
 using EventBookSystem.Data.Repositories.Interfaces;
+using Microsoft.Extensions.Logging;
 using PaymentStatus = EventBookSystem.Data.Enums.PaymentStatus;
 
 namespace EventBookSystem.Core.Service.Services
@@ -14,11 +15,11 @@ namespace EventBookSystem.Core.Service.Services
         private readonly ICartRepository _cartRepository;
         private readonly ICartItemRepository _cartItemRepository;
         private readonly IPaymentRepository _paymentRepository;
-        private readonly ILoggerManager _logger;
+        private readonly ILogger<CartService> _logger;
         private readonly IMapper _mapper;
 
         public CartService(ICartRepository cartRepository, ICartItemRepository cartItemRepository, IPaymentRepository paymentRepository,
-            ILoggerManager logger, IMapper mapper)
+            ILogger<CartService> logger, IMapper mapper)
         {
             _cartRepository = cartRepository;
             _cartItemRepository = cartItemRepository;
