@@ -4,7 +4,7 @@
     {
         public Guid Id { get; set; }
 
-        public decimal TotalPrice => CartItems.Sum(x => x.Price);
+        public decimal TotalPrice => (CartItems?.Any() ?? false) ? CartItems.Sum(x => x.Price) : default;
 
         public IEnumerable<CartItemDto> CartItems { get; set; } = null!;
     }
