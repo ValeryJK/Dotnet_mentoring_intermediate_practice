@@ -19,6 +19,6 @@ namespace EventBookSystem.DAL.Repositories
         }
 
         public async Task<Venue?> GetVenueByIdAsync(Guid venueId, bool trackChanges) =>
-           await GetAll(trackChanges).Where(x => x.Id == venueId).SingleOrDefaultAsync();
+           await GetAll(trackChanges).Include(s => s.Sections).Where(x => x.Id == venueId).SingleOrDefaultAsync();
     }
 }

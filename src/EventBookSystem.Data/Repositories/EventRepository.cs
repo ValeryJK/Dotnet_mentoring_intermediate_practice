@@ -23,6 +23,6 @@ namespace EventBookSystem.DAL.Repositories
         }
 
         public async Task<Event?> GetEventByIdAsync(Guid eventId, bool trackChanges) =>
-            await GetAll(trackChanges).Where(x => x.Id == eventId).SingleOrDefaultAsync();
+            await GetAll(trackChanges).Include(s => s.Sections).Where(x => x.Id == eventId).SingleOrDefaultAsync();
     }
 }
