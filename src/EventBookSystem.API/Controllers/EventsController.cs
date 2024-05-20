@@ -1,4 +1,5 @@
-﻿using EventBookSystem.Common.DTO;
+﻿using EventBookSystem.API.ActionFilters;
+using EventBookSystem.Common.DTO;
 using EventBookSystem.Core.Service.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -58,6 +59,7 @@ namespace EventBookSystem.API.Controllers
         }
 
         [HttpPut("{eventId}")]
+        [ServiceFilter(typeof(SpecialExceptionFilter))]
         public async Task<IActionResult> UpdateEventAsync(Guid eventId, [FromBody] EventForUpdateDto eventDto)
         {
             if (!ModelState.IsValid)
@@ -71,6 +73,7 @@ namespace EventBookSystem.API.Controllers
         }
 
         [HttpDelete("{eventId}")]
+        [ServiceFilter(typeof(SpecialExceptionFilter))]
         public async Task<IActionResult> DeleteEventAsync(Guid eventId)
         {
             await _eventService.DeleteEventAsync(eventId);

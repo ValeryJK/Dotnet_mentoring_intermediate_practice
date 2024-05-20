@@ -33,10 +33,7 @@ namespace EventBookSystem.API
 
             builder.Services.AddScoped<ValidationFilterAttribute>();
 
-            builder.Services.AddControllers(options =>
-            {
-                options.Filters.Add<CustomExceptionFilter>();
-            });
+            builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(s =>
             {
