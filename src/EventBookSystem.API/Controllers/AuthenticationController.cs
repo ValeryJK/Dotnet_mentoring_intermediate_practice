@@ -8,7 +8,7 @@ namespace EventBookSystem.API.Controllers
     [Route("authentication")]
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
-    public class AuthenticationController : Controller
+    public class AuthenticationController : ControllerBase
     {
         private readonly IAuthenticationService _authenticationService;
 

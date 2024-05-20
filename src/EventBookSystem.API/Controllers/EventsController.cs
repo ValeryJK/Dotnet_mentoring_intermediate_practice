@@ -9,7 +9,7 @@ namespace EventBookSystem.API.Controllers
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
     [Authorize]
-    public class EventsController : Controller
+    public class EventsController : ControllerBase
     {
         private readonly IEventService _eventService;
 

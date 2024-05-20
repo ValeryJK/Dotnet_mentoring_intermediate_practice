@@ -9,7 +9,7 @@ namespace EventBookSystem.API.Controllers
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
     [Authorize]
-    public class VenuesController : Controller
+    public class VenuesController : ControllerBase
     {
         private readonly IVenueService _venueService;
 

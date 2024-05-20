@@ -141,7 +141,7 @@ namespace EventBookSystem.IntegrationTests.Services
             {
                 Id = Guid.NewGuid()
             };
-            _context.Carts.Add(cart);
+            await _context.Carts.AddAsync(cart);
             await _context.SaveChangesAsync();
 
             var seat = new Seat
@@ -151,7 +151,7 @@ namespace EventBookSystem.IntegrationTests.Services
                 Number = 1,
                 Status = SeatStatus.Available
             };
-            _context.Seats.Add(seat);
+            await _context.Seats.AddAsync(seat);
             await _context.SaveChangesAsync();
 
             var cartItem = new CartItem
@@ -162,7 +162,7 @@ namespace EventBookSystem.IntegrationTests.Services
                 DateUTC = DateTime.UtcNow,
                 CartId = cart.Id
             };
-            _context.CartItems.Add(cartItem);
+            await _context.CartItems.AddAsync(cartItem);
             await _context.SaveChangesAsync();
 
             // Act
@@ -184,7 +184,7 @@ namespace EventBookSystem.IntegrationTests.Services
                 Id = Guid.NewGuid(),
                 UUIDKey = Guid.NewGuid(),
             };
-            _context.Carts.Add(cart);
+            await _context.Carts.AddAsync(cart);
             await _context.SaveChangesAsync();
 
             var price = new Price
@@ -193,7 +193,7 @@ namespace EventBookSystem.IntegrationTests.Services
                 Name = "VIP",
                 Amount = 100,
             };
-            _context.Prices.Add(price);
+            await _context.Prices.AddAsync(price);
             await _context.SaveChangesAsync();
 
             var seat = new Seat
@@ -204,7 +204,7 @@ namespace EventBookSystem.IntegrationTests.Services
                 Status = SeatStatus.Available,
                 Price = price
             };
-            _context.Seats.Add(seat);
+            await _context.Seats.AddAsync(seat);
             await _context.SaveChangesAsync();           
 
             var cartItem = new CartItem
@@ -215,7 +215,7 @@ namespace EventBookSystem.IntegrationTests.Services
                 DateUTC = DateTime.UtcNow,
                 CartId = cart.Id,
             };
-            _context.CartItems.Add(cartItem);
+            await _context.CartItems.AddAsync(cartItem);
             await _context.SaveChangesAsync();
 
             // Act

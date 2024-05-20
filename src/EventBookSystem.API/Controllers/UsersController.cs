@@ -10,7 +10,7 @@ namespace EventBookSystem.API.Controllers
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
     [Authorize]
-    public class UsersController : Controller
+    public class UsersController : ControllerBase
     {
         private readonly IAuthenticationService _authorizationService;
 

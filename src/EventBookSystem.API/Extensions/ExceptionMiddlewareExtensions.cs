@@ -1,6 +1,7 @@
 ﻿using EventBookSystem.API.Models;
 using EventBookSystem.Core.Service.Services.Interfaces;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.Extensions.Logging;
 using System.Net;
 
 namespace EventBookSystem.API.Extensions
@@ -21,7 +22,7 @@ namespace EventBookSystem.API.Extensions
 
                     if (contextFeature != null)
                     {
-                        logger.LogError($"Something went wrong: {contextFeature.Error}");
+                        logger.LogError(contextFeature.Error.Message);
                     }
 
                     await context.Response.WriteAsync(new ErrorDetails()

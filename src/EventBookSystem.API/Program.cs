@@ -1,7 +1,6 @@
 using EventBookSystem.API.ActionFilters;
 using EventBookSystem.API.Extensions;
 using EventBookSystem.Core.Service;
-using EventBookSystem.Core.Service.Services.Interfaces;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Reflection;
@@ -10,6 +9,8 @@ namespace EventBookSystem.API
 {
     public class Program
     {
+        protected Program() { }
+
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);

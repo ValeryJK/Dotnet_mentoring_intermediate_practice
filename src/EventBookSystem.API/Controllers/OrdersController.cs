@@ -9,7 +9,7 @@ namespace EventBookSystem.API.Controllers
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
     [Authorize]
-    public class OrdersController : Controller
+    public class OrdersController : ControllerBase
     {
         private readonly ICartService _cartService;
 

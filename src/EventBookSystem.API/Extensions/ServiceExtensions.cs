@@ -7,10 +7,8 @@ namespace EventBookSystem.API.Extensions
     public static class ServiceExtensions
     {
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
-        {
-            var jwtSettings = configuration.GetSection("JwtSettings");
-            var secretKey = Environment.GetEnvironmentVariable("SECRET");
-
+        {            
+            var jwtKeyError = "JWT key cannot be null or empty.";
             services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -21,7 +19,7 @@ namespace EventBookSystem.API.Extensions
                 var jwtKey = configuration["JwtKey"];
                 if (string.IsNullOrEmpty(jwtKey))
                 {
-                    throw new ArgumentNullException("JwtKey", "JWT key cannot be null or empty.");
+                    throw new ArgumentNullException(jwtKeyError);
                 }
 
                 options.TokenValidationParameters = new TokenValidationParameters

@@ -35,7 +35,7 @@ namespace EventBookSystem.IntegrationTests.Services
                 { 
                     Id = Guid.NewGuid() 
                 };
-            _context.Carts.Add(cart);
+            await _context.Carts.AddAsync(cart);
             await _context.SaveChangesAsync();
 
             var seat = new Seat 
@@ -50,7 +50,7 @@ namespace EventBookSystem.IntegrationTests.Services
                         }, 
                     Status = SeatStatus.Available 
                 };
-            _context.Seats.Add(seat);
+            await _context.Seats.AddAsync(seat);
             await _context.SaveChangesAsync();
 
             var cartItem = new CartItem 
@@ -61,7 +61,7 @@ namespace EventBookSystem.IntegrationTests.Services
                     CartId = cart.Id, 
                     DateUTC = DateTime.UtcNow 
                 };
-            _context.CartItems.Add(cartItem);
+            await _context.CartItems.AddAsync(cartItem);
             await _context.SaveChangesAsync();
 
             // Act
@@ -77,7 +77,7 @@ namespace EventBookSystem.IntegrationTests.Services
         {
             // Arrange          
             var cart = new Cart { Id = Guid.NewGuid(), UUIDKey = Guid.NewGuid() };
-            _context.Carts.Add(cart);
+            await _context.Carts.AddAsync(cart);
             await _context.SaveChangesAsync();
 
             var seat = new Seat
@@ -92,7 +92,7 @@ namespace EventBookSystem.IntegrationTests.Services
                 },
                 Status = SeatStatus.Available
             };
-            _context.Seats.Add(seat);
+            await _context.Seats.AddAsync(seat);
             await _context.SaveChangesAsync();
 
             var seatRequest = new SeatRequest 
@@ -107,7 +107,7 @@ namespace EventBookSystem.IntegrationTests.Services
 
             // Assert
             updatedCart.Should().NotBeNull();
-            updatedCart.CartItems.Should().ContainSingle();
+            updatedCart?.CartItems.Should().ContainSingle();
         }
 
         [Fact]
@@ -156,7 +156,7 @@ namespace EventBookSystem.IntegrationTests.Services
         {
             // Arrange
             var cart = new Cart { Id = Guid.NewGuid(), UUIDKey = Guid.NewGuid() };
-            _context.Carts.Add(cart);
+            await _context.Carts.AddAsync(cart);
             await _context.SaveChangesAsync();
 
             var seat = new Seat
@@ -171,7 +171,7 @@ namespace EventBookSystem.IntegrationTests.Services
                 },
                 Status = SeatStatus.Available
             };
-            _context.Seats.Add(seat);
+            await _context.Seats.AddAsync(seat);
             await _context.SaveChangesAsync();
 
             var cartItem = new CartItem 
@@ -182,7 +182,7 @@ namespace EventBookSystem.IntegrationTests.Services
                     CartId = cart.Id, 
                     DateUTC = DateTime.UtcNow 
                 };
-            _context.CartItems.Add(cartItem);
+            await _context.CartItems.AddAsync(cartItem);
             await _context.SaveChangesAsync();
 
             // Act

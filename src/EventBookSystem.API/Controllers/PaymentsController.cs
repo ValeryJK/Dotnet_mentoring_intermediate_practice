@@ -10,7 +10,7 @@ namespace EventBookSystem.API.Controllers
     [ApiController]
     [ApiExplorerSettings(GroupName = "v1")]
     [Authorize]
-    public class PaymentsController : Controller
+    public class PaymentsController : ControllerBase
     {
         private readonly IPaymentService _paymentService;
 
