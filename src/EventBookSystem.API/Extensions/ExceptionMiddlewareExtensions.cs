@@ -20,7 +20,7 @@ namespace EventBookSystem.API.Extensions
                     var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
                     var errorMessage = "Internal Server Error.";
 
-                    if (contextFeature != null)
+                    if (contextFeature is not null)
                     {
                         logger.LogError(contextFeature.Error.Message);
                     }

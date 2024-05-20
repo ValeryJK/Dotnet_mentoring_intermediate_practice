@@ -55,7 +55,7 @@ namespace EventBookSystem.Core.Service.Services
         {
             _user = await _userManager.FindByNameAsync(userForAuth.UserName);
 
-            var result = (_user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password));
+            var result = (_user is not null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password));
             if (!result)
             {
                 _logger.LogWarning("Authentication failed. Wrong user name or password.");

@@ -39,7 +39,7 @@ namespace EventBookSystem.Core.Service.Services
         {
             var cart = await _cartRepository.GetCartById(cartId);
 
-            if (cart == null || cart.CartItems.Any(x => x.SeatId == payload.SeatId
+            if (cart is null || cart.CartItems.Any(x => x.SeatId == payload.SeatId
                 && x.EventId == payload.EventId))
             {
                 return default;
@@ -101,7 +101,7 @@ namespace EventBookSystem.Core.Service.Services
             var cartItem = cartItems.FirstOrDefault(x => x.CartId == cartId
                 && x.SeatId == seatId && x.EventId == eventId);
 
-            if (cartItem != null)
+            if (cartItem is not null)
             {
                 _cartItemRepository.Delete(cartItem);
                 await _cartItemRepository.SaveAsync();
