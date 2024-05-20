@@ -8,7 +8,7 @@ namespace EventBookSystem.DAL.Repositories
     {
         protected MainDBContext _context;
 
-        public RepositoryBase(MainDBContext context)
+        protected RepositoryBase(MainDBContext context)
         {
             _context = context;
         }

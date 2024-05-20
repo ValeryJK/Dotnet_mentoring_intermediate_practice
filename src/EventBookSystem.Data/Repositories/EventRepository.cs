@@ -10,7 +10,6 @@ namespace EventBookSystem.DAL.Repositories
     {
         public EventRepository(MainDBContext context) : base(context) { }
 
-
         public async Task<IEnumerable<Event>> GetAllEventsAsync(bool trackChanges) =>
            await GetAll(trackChanges).OrderBy(c => c.Name).ToListAsync();
 

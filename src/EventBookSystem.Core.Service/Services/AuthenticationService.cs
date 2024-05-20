@@ -44,7 +44,9 @@ namespace EventBookSystem.Core.Service.Services
             var result = await _userManager.CreateAsync(user, password: userForRegistration.Password);
 
             if (result.Succeeded)
+            {
                 await _userManager.AddToRolesAsync(user, roles: userForRegistration.Roles);
+            }                
 
             return result;
         }
@@ -55,7 +57,9 @@ namespace EventBookSystem.Core.Service.Services
 
             var result = (_user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password));
             if (!result)
-                _logger.LogWarning($"{nameof(ValidateUser)}: Authentication failed. Wrong user name or password.");
+            {
+                _logger.LogWarning("Authentication failed. Wrong user name or password.");
+            }                
 
             return result;
         }

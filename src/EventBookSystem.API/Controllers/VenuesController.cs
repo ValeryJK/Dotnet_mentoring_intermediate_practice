@@ -28,8 +28,10 @@ namespace EventBookSystem.API.Controllers
         {
             var venueDto = await _venueService.GetVenueByIdAsync(venueId);
 
-            if (venueDto == null)
+            if (venueDto is null)
+            {
                 return NotFound();
+            }
 
             return Ok(venueDto);
         }
@@ -46,7 +48,9 @@ namespace EventBookSystem.API.Controllers
         public async Task<IActionResult> CreateVenueAsync([FromBody] VenueForCreationDto venueDto)
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }                
 
             var createdVenue = await _venueService.CreateVenueAsync(venueDto);
 
@@ -57,16 +61,11 @@ namespace EventBookSystem.API.Controllers
         public async Task<IActionResult> UpdateVenueAsync(Guid venueId, [FromBody] VenueForUpdateDto venueDto)
         {
             if (!ModelState.IsValid)
+            {
                 return BadRequest(ModelState);
+            }
 
-            try
-            {
-                await _venueService.UpdateVenueAsync(venueId, venueDto);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
+            await _venueService.UpdateVenueAsync(venueId, venueDto);
 
             return NoContent();
         }
@@ -74,14 +73,7 @@ namespace EventBookSystem.API.Controllers
         [HttpDelete("{venueId}")]
         public async Task<IActionResult> DeleteEventAsync(Guid venueId)
         {
-            try
-            {
-                await _venueService.DeleteVenueAsync(venueId);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
+            await _venueService.DeleteVenueAsync(venueId);
 
             return NoContent();
         }

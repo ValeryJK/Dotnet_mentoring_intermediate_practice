@@ -1,6 +1,6 @@
 ﻿namespace EventBookSystem.Common.DTO
 {
-    public class VenueDTO
+    public class VenueDto
     {
         public Guid Id { get; set; }
 

@@ -15,33 +15,33 @@ namespace EventBookSystem.DAL.DataContext
             Database.EnsureCreated();
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(builder);
 
 
-            modelBuilder.Entity<CartItem>()
+            builder.Entity<CartItem>()
                 .HasOne(ci => ci.Cart)
                 .WithMany(c => c.CartItems)
                 .HasForeignKey(ci => ci.CartId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<CartItem>()
+            builder.Entity<CartItem>()
                 .HasOne(ci => ci.Seat)
                 .WithMany()
                 .HasForeignKey(ci => ci.SeatId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Event>().Property(e => e.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<Venue>().Property(v => v.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<Section>().Property(s => s.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<Seat>().Property(s => s.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<Cart>().Property(s => s.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<CartItem>().Property(s => s.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<Price>().Property(s => s.Id).ValueGeneratedOnAdd();
-            modelBuilder.Entity<Payment>().Property(s => s.Id).ValueGeneratedOnAdd();
+            builder.Entity<Event>().Property(e => e.Id).ValueGeneratedOnAdd();
+            builder.Entity<Venue>().Property(v => v.Id).ValueGeneratedOnAdd();
+            builder.Entity<Section>().Property(s => s.Id).ValueGeneratedOnAdd();
+            builder.Entity<Seat>().Property(s => s.Id).ValueGeneratedOnAdd();
+            builder.Entity<Cart>().Property(s => s.Id).ValueGeneratedOnAdd();
+            builder.Entity<CartItem>().Property(s => s.Id).ValueGeneratedOnAdd();
+            builder.Entity<Price>().Property(s => s.Id).ValueGeneratedOnAdd();
+            builder.Entity<Payment>().Property(s => s.Id).ValueGeneratedOnAdd();
 
-            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            foreach (var entityType in builder.Model.GetEntityTypes())
             {
                 var tableName = entityType.GetTableName() ?? string.Empty;
                 if (tableName.StartsWith("AspNet"))
@@ -50,16 +50,16 @@ namespace EventBookSystem.DAL.DataContext
                 }
             }
 
-            modelBuilder.ApplyConfiguration(new EventConfiguration());
-            modelBuilder.ApplyConfiguration(new VenueConfiguration());
-            modelBuilder.ApplyConfiguration(new UserConfiguration());
-            modelBuilder.ApplyConfiguration(new RoleConfiguration());
-            modelBuilder.ApplyConfiguration(new CartConfiguration());
-            modelBuilder.ApplyConfiguration(new CartItemConfiguration());
-            modelBuilder.ApplyConfiguration(new PriceConfiguration());
-            modelBuilder.ApplyConfiguration(new PaymentConfiguration());
-            modelBuilder.ApplyConfiguration(new SeatConfiguration());
-            modelBuilder.ApplyConfiguration(new SectionConfiguration());
+            builder.ApplyConfiguration(new EventConfiguration());
+            builder.ApplyConfiguration(new VenueConfiguration());
+            builder.ApplyConfiguration(new UserConfiguration());
+            builder.ApplyConfiguration(new RoleConfiguration());
+            builder.ApplyConfiguration(new CartConfiguration());
+            builder.ApplyConfiguration(new CartItemConfiguration());
+            builder.ApplyConfiguration(new PriceConfiguration());
+            builder.ApplyConfiguration(new PaymentConfiguration());
+            builder.ApplyConfiguration(new SeatConfiguration());
+            builder.ApplyConfiguration(new SectionConfiguration());
         }
 
         public DbSet<Event> Events { get; set; } = null!;

@@ -25,21 +25,21 @@ namespace EventBookSystem.Core.Service.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<PaymentDto>> GetAllPaymentsAsync(bool trackChanges)
+        public async Task<IEnumerable<PaymentDto>> GetAllPaymentsAsync(bool trackChanges = default)
         {
             var payments = await _paymentRepository.GetAll(trackChanges).OrderBy(c => c.DateUTC).ToListAsync();
 
             return _mapper.Map<IEnumerable<PaymentDto>>(payments);
         }
 
-        public async Task<PaymentDto?> GetPaymentByIdAsync(Guid paymentId, bool trackChanges)
+        public async Task<PaymentDto?> GetPaymentByIdAsync(Guid paymentId, bool trackChanges = default)
         {
             var payment = await _paymentRepository.GetAll(trackChanges).FirstOrDefaultAsync(x => x.Id == paymentId);
 
             return _mapper.Map<PaymentDto>(payment);
         }
 
-        public async Task<bool> CompletePaymentAsync(Guid paymentId, bool trackChanges)
+        public async Task<bool> CompletePaymentAsync(Guid paymentId, bool trackChanges = true)
         {
             var payment = await _paymentRepository.GetPaymentByIdAsync(paymentId);
             var cartsItems = await _cartRepository.GetCartItemsByPaymentId(paymentId);
@@ -58,10 +58,12 @@ namespace EventBookSystem.Core.Service.Services
 
             await _paymentRepository.SaveAsync();
 
+            _logger.LogInformation("Payment completed successfully.");
+
             return true;
         }
 
-        public async Task<bool> FailPaymentAsync(Guid paymentId, bool trackChanges)
+        public async Task<bool> FailPaymentAsync(Guid paymentId, bool trackChanges = true)
         {
             var payment = await _paymentRepository.GetPaymentByIdAsync(paymentId);
             var cartsItems = await _cartRepository.GetCartItemsByPaymentId(paymentId);

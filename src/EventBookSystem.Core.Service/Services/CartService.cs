@@ -28,7 +28,7 @@ namespace EventBookSystem.Core.Service.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<CartItemDto>> GetCartItemsByCartId(Guid cartId, bool trackChanges)
+        public async Task<IEnumerable<CartItemDto>> GetCartItemsByCartId(Guid cartId, bool trackChanges = default)
         {
             var cartItems = await _cartRepository.GetCartItemsByCartId(cartId);
 
@@ -57,6 +57,8 @@ namespace EventBookSystem.Core.Service.Services
             _cartItemRepository.Create(cartItem);
             await _cartItemRepository.SaveAsync();
 
+            _logger.LogInformation("Cart item save successfully.");
+
             var updatedCart = await _cartRepository.GetCartById(cartId);
 
             return _mapper.Map<CartDto>(updatedCart);
@@ -66,7 +68,7 @@ namespace EventBookSystem.Core.Service.Services
         {
             var cart = await _cartRepository.GetCartById(cartId);
 
-            if (cart == null || !cart.CartItems.Any())
+            if (cart is null || !cart.CartItems.Any())
             {
                 return default;
             }

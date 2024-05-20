@@ -54,7 +54,7 @@ namespace EventBookSystem.API.Controllers
         {
             var paymentId = await _cartService.BookCartAsync(cartId);
 
-            if (paymentId == null)
+            if (paymentId is null)
             {
                 return BadRequest($"Cart with id {cartId} is empty or doesn't exist.");
             }

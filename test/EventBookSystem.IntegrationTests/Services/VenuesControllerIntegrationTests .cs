@@ -31,7 +31,7 @@ namespace EventBookSystem.IntegrationTests.Services
             var response = await _client.GetAsync("/venues");
             response.EnsureSuccessStatusCode();
 
-            var venues = await response.Content.ReadFromJsonAsync<VenueDTO[]>();
+            var venues = await response.Content.ReadFromJsonAsync<VenueDto[]>();
 
             // Assert
             venues.Should().NotBeNullOrEmpty();
@@ -46,13 +46,13 @@ namespace EventBookSystem.IntegrationTests.Services
             var venue = new VenueForCreationDto { Name = "Test Venue" };
             var postResponse = await _client.PostAsJsonAsync("/venues", venue);
             postResponse.EnsureSuccessStatusCode();
-            var createdVenue = await postResponse.Content.ReadFromJsonAsync<VenueDTO>();
+            var createdVenue = await postResponse.Content.ReadFromJsonAsync<VenueDto>();
 
             // Act
             var response = await _client.GetAsync($"/venues/{createdVenue?.Id}");
             response.EnsureSuccessStatusCode();
 
-            var fetchedVenue = await response.Content.ReadFromJsonAsync<VenueDTO>();
+            var fetchedVenue = await response.Content.ReadFromJsonAsync<VenueDto>();
 
             // Assert
             fetchedVenue.Should().NotBeNull();
@@ -69,7 +69,7 @@ namespace EventBookSystem.IntegrationTests.Services
             var venue = new VenueForCreationDto { Name = "Test Venue" };
             var postResponse = await _client.PostAsJsonAsync("/venues", venue);
             postResponse.EnsureSuccessStatusCode();
-            var createdVenue = await postResponse.Content.ReadFromJsonAsync<VenueDTO>();
+            var createdVenue = await postResponse.Content.ReadFromJsonAsync<VenueDto>();
 
             // Act
             var response = await _client.GetAsync($"/venues/{createdVenue?.Id}/sections");
@@ -93,7 +93,7 @@ namespace EventBookSystem.IntegrationTests.Services
             var response = await _client.PostAsJsonAsync("/venues", venue);
             response.EnsureSuccessStatusCode();
 
-            var createdVenue = await response.Content.ReadFromJsonAsync<VenueDTO>();
+            var createdVenue = await response.Content.ReadFromJsonAsync<VenueDto>();
 
             // Assert
             createdVenue.Should().NotBeNull();
@@ -110,7 +110,7 @@ namespace EventBookSystem.IntegrationTests.Services
             var postResponse = await _client.PostAsJsonAsync("/venues", venue);
             postResponse.EnsureSuccessStatusCode();
 
-            var createdVenue = await postResponse.Content.ReadFromJsonAsync<VenueDTO>();
+            var createdVenue = await postResponse.Content.ReadFromJsonAsync<VenueDto>();
 
             var updatedVenue = new VenueForUpdateDto { Name = "Updated Venue" };
 
@@ -122,7 +122,7 @@ namespace EventBookSystem.IntegrationTests.Services
             putResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
 
             var getResponse = await _client.GetAsync($"/venues/{createdVenue?.Id}");
-            var fetchedVenue = await getResponse.Content.ReadFromJsonAsync<VenueDTO>();
+            var fetchedVenue = await getResponse.Content.ReadFromJsonAsync<VenueDto>();
             fetchedVenue?.Name.Should().Be(updatedVenue.Name);
         }
 
@@ -135,7 +135,7 @@ namespace EventBookSystem.IntegrationTests.Services
             var venue = new VenueForCreationDto { Name = "Test Venue" };
             var postResponse = await _client.PostAsJsonAsync("/venues", venue);
             postResponse.EnsureSuccessStatusCode();
-            var createdVenue = await postResponse.Content.ReadFromJsonAsync<VenueDTO>();
+            var createdVenue = await postResponse.Content.ReadFromJsonAsync<VenueDto>();
 
             // Act
             var deleteResponse = await _client.DeleteAsync($"/venues/{createdVenue?.Id}");

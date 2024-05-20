@@ -31,7 +31,7 @@ namespace EventBookSystem.API.Controllers
             if (eventDto is null)
             {
                 return NotFound();
-            }   
+            }
 
             return Ok(eventDto);
         }
@@ -50,7 +50,7 @@ namespace EventBookSystem.API.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }               
+            }
 
             var createdEvent = await _eventService.CreateEventAsync(eventDto);
 
@@ -63,16 +63,9 @@ namespace EventBookSystem.API.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }                
+            }
 
-            try
-            {
-                await _eventService.UpdateEventAsync(eventId, eventDto);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
+            await _eventService.UpdateEventAsync(eventId, eventDto);
 
             return NoContent();
         }
@@ -80,14 +73,7 @@ namespace EventBookSystem.API.Controllers
         [HttpDelete("{eventId}")]
         public async Task<IActionResult> DeleteEventAsync(Guid eventId)
         {
-            try
-            {
-                await _eventService.DeleteEventAsync(eventId);
-            }
-            catch (KeyNotFoundException)
-            {
-                return NotFound();
-            }
+            await _eventService.DeleteEventAsync(eventId);
 
             return NoContent();
         }

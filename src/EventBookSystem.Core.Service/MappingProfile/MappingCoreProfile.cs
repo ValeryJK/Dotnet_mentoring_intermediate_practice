@@ -11,7 +11,7 @@ namespace EventBookSystem.Core.Service.MappingProfile
         {
             CreateMap<UserForRegistrationDto, User>();
 
-            CreateMap<Venue, VenueDTO>();
+            CreateMap<Venue, VenueDto>();
             CreateMap<Section, SectionDto>();
 
             CreateMap<Event, EventDto>();
