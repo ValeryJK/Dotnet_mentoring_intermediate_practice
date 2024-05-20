@@ -1,0 +1,6 @@
+@EventBookSystem.API_HostAddress = http://localhost:5031
+
+GET {{EventBookSystem.API_HostAddress}}/event/
+Accept: application/json
+
+###
