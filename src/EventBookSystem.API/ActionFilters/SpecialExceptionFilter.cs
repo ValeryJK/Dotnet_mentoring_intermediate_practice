@@ -7,18 +7,12 @@ namespace EventBookSystem.API.ActionFilters
     {
         public void OnException(ExceptionContext context)
         {
-            context.Result = context.Exception switch
-            {
-                KeyNotFoundException => new NotFoundObjectResult(new { context.Exception.Message }),
-                BadHttpRequestException => new ObjectResult(new { context.Exception.Message })
-                {
-                    StatusCode = StatusCodes.Status400BadRequest,
-                },
-                _ => new ObjectResult(new { Message = "An error occurred." })
-                {
-                    StatusCode = StatusCodes.Status500InternalServerError,
-                }
-            };
+            if (context.Exception is not KeyNotFoundException)
+            { 
+                return; 
+            }
+
+            context.Result = new NotFoundObjectResult(new { context.Exception.Message });
 
             context.ExceptionHandled = true;
         }
