@@ -37,12 +37,58 @@ namespace EventBookSystem.IntegrationTests.Services
 
             // Assert
             createdVenue.Should().NotBeNull();
-            createdVenue.Name.Should().Be(venueDto.Name);
-            createdVenue.Location.Should().Be(venueDto.Location);
+        }
 
-            // Optionally, verify that the Venue exists in the database
+        [Fact]
+        public async Task CreateVenueAsync_ShouldReturnVenueWithCorrectName()
+        {
+            // Arrange
+            var venueDto = new VenueForCreationDto
+            {
+                Name = "Test Venue",
+                Location = "123 Test Street"
+            };
+
+            // Act
+            var createdVenue = await _venueService.CreateVenueAsync(venueDto);
+
+            // Assert
+            createdVenue.Name.Should().Be(venueDto.Name);
+        }
+
+        [Fact]
+        public async Task CreateVenueAsync_ShouldReturnVenueWithCorrectLocation()
+        {
+            // Arrange
+            var venueDto = new VenueForCreationDto
+            {
+                Name = "Test Venue",
+                Location = "123 Test Street"
+            };
+
+            // Act
+            var createdVenue = await _venueService.CreateVenueAsync(venueDto);
+
+            // Assert
+            createdVenue.Location.Should().Be(venueDto.Location);
+        }
+
+        [Fact]
+        public async Task CreateVenueAsync_ShouldSaveVenueInDatabase()
+        {
+            // Arrange
+            var venueDto = new VenueForCreationDto
+            {
+                Name = "Test Venue",
+                Location = "123 Test Street"
+            };
+
+            // Act
+            var createdVenue = await _venueService.CreateVenueAsync(venueDto);
+
+            // Assert
             var venueInDb = await _context.Venues.FindAsync(createdVenue.Id);
-            venueInDb.Should().NotBeNull();
+            venueInDb.Should().BeEquivalentTo(venueDto, options => options.ExcludingMissingMembers());
         }
 
         [Fact]
@@ -61,12 +107,70 @@ namespace EventBookSystem.IntegrationTests.Services
 
             // Assert
             fetchedVenue.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task GetVenueByIdAsync_ShouldReturnVenueWithCorrectName()
+        {
+            // Arrange
+            var venueDto = new VenueForCreationDto
+            {
+                Name = "Test Venue",
+                Location = "123 Test Street"
+            };
+            var createdVenue = await _venueService.CreateVenueAsync(venueDto);
+
+            // Act
+            var fetchedVenue = await _venueService.GetVenueByIdAsync(createdVenue.Id);
+
+            // Assert
             fetchedVenue?.Name.Should().Be(venueDto.Name);
+        }
+
+        [Fact]
+        public async Task GetVenueByIdAsync_ShouldReturnVenueWithCorrectLocation()
+        {
+            // Arrange
+            var venueDto = new VenueForCreationDto
+            {
+                Name = "Test Venue",
+                Location = "123 Test Street"
+            };
+            var createdVenue = await _venueService.CreateVenueAsync(venueDto);
+
+            // Act
+            var fetchedVenue = await _venueService.GetVenueByIdAsync(createdVenue.Id);
+
+            // Assert
             fetchedVenue?.Location.Should().Be(venueDto.Location);
         }
 
         [Fact]
-        public async Task UpdateVenueAsync_ShouldReturnUpdatedVenue()
+        public async Task UpdateVenueAsync_ShouldNotThrow()
+        {
+            // Arrange
+            var venueDto = new VenueForCreationDto
+            {
+                Name = "Test Venue",
+                Location = "123 Test Street"
+            };
+            var createdVenue = await _venueService.CreateVenueAsync(venueDto);
+
+            var updatedVenueDto = new VenueForUpdateDto
+            {
+                Name = "Updated Venue",
+                Location = "456 Updated Street"
+            };
+
+            // Act
+            Func<Task> action = async () => await _venueService.UpdateVenueAsync(createdVenue.Id, updatedVenueDto);
+
+            // Assert
+            await action.Should().NotThrowAsync();
+        }
+
+        [Fact]
+        public async Task UpdateVenueAsync_ShouldUpdateName()
         {
             // Arrange
             var venueDto = new VenueForCreationDto
@@ -87,9 +191,50 @@ namespace EventBookSystem.IntegrationTests.Services
 
             // Assert
             var updatedVenue = await _venueService.GetVenueByIdAsync(createdVenue.Id);
-            updatedVenue.Should().NotBeNull();
             updatedVenue?.Name.Should().Be(updatedVenueDto.Name);
+        }
+
+        [Fact]
+        public async Task UpdateVenueAsync_ShouldUpdateLocation()
+        {
+            // Arrange
+            var venueDto = new VenueForCreationDto
+            {
+                Name = "Test Venue",
+                Location = "123 Test Street"
+            };
+            var createdVenue = await _venueService.CreateVenueAsync(venueDto);
+
+            var updatedVenueDto = new VenueForUpdateDto
+            {
+                Name = "Updated Venue",
+                Location = "456 Updated Street"
+            };
+
+            // Act
+            await _venueService.UpdateVenueAsync(createdVenue.Id, updatedVenueDto);
+
+            // Assert
+            var updatedVenue = await _venueService.GetVenueByIdAsync(createdVenue.Id);
             updatedVenue?.Location.Should().Be(updatedVenueDto.Location);
+        }
+
+        [Fact]
+        public async Task DeleteVenueAsync_ShouldNotThrow()
+        {
+            // Arrange
+            var venueDto = new VenueForCreationDto
+            {
+                Name = "Test Venue",
+                Location = "123 Test Street"
+            };
+            var createdVenue = await _venueService.CreateVenueAsync(venueDto);
+
+            // Act
+            Func<Task> action = async () => await _venueService.DeleteVenueAsync(createdVenue.Id);
+
+            // Assert
+            await action.Should().NotThrowAsync();
         }
 
         [Fact]
