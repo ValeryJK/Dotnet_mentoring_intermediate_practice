@@ -3,6 +3,7 @@ using EventBookSystem.Common.DTO;
 using EventBookSystem.Core.Service.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace EventBookSystem.API.Controllers
 {
@@ -13,31 +14,54 @@ namespace EventBookSystem.API.Controllers
     public class EventsController : ControllerBase
     {
         private readonly IEventService _eventService;
+        private readonly IMemoryCache _cache;
 
-        public EventsController(IEventService eventService) => _eventService = eventService;
+        public EventsController(IEventService eventService, IMemoryCache cache)
+        {
+            _eventService = eventService;
+            _cache = cache;
+        }
 
         [HttpGet]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client, NoStore = false)]
         public async Task<IActionResult> GetAllEvents()
         {
-            var events = await _eventService.GetAllEventsAsync();
+            var cacheKey = "AllEvents";
+            if (!_cache.TryGetValue(cacheKey, out IEnumerable<EventDto>? events))
+            {
+                events = await _eventService.GetAllEventsAsync();
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(5));
+
+                _cache.Set(cacheKey, events, cacheEntryOptions);
+            }
 
             return Ok(events);
         }
 
         [HttpGet("{eventId}")]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client, NoStore = false)]
         public async Task<IActionResult> GetEventByIdAsync(Guid eventId)
         {
-            var eventDto = await _eventService.GetEventByIdAsync(eventId);
-
-            if (eventDto is null)
+            var cacheKey = $"Event_{eventId}";
+            if (!_cache.TryGetValue(cacheKey, out EventDto? eventDto))
             {
-                return NotFound();
+                eventDto = await _eventService.GetEventByIdAsync(eventId);
+                if (eventDto == null)
+                {
+                    return NotFound();
+                }
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions().SetSlidingExpiration(TimeSpan.FromMinutes(5));
+
+                _cache.Set(cacheKey, eventDto, cacheEntryOptions);
             }
 
             return Ok(eventDto);
         }
 
         [HttpGet("{eventId}/sections/{sectionId}/seats")]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client, NoStore = false)]
         public async Task<IActionResult> GetSeatsBySection(Guid eventId, Guid sectionId)
         {
             var seats = await _eventService.GetSeatsBySection(eventId, sectionId);
@@ -55,6 +79,8 @@ namespace EventBookSystem.API.Controllers
 
             var createdEvent = await _eventService.CreateEventAsync(eventDto);
 
+            await InvalidateEventCache();
+
             return Ok(createdEvent);
         }
 
@@ -69,6 +95,9 @@ namespace EventBookSystem.API.Controllers
 
             await _eventService.UpdateEventAsync(eventId, eventDto);
 
+            await InvalidateEventCache();
+            _cache.Remove($"Event_{eventId}");
+
             return NoContent();
         }
 
@@ -79,6 +108,12 @@ namespace EventBookSystem.API.Controllers
             await _eventService.DeleteEventAsync(eventId);
 
             return NoContent();
+        }
+
+        private async Task InvalidateEventCache()
+        {
+            _cache.Remove("AllEvents");
+            await Task.CompletedTask;
         }
     }
 }

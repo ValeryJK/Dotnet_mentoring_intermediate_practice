@@ -18,7 +18,7 @@ namespace EventBookSystem.Core.Service
             services.ConfigureIdentity();
 
             services.AddAutoMapper(typeof(MappingCoreProfile));
-
+            services.AddMemoryCache();
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<IVenueService, VenueService>();
             services.AddScoped<ICartService, CartService>();

@@ -3,6 +3,7 @@ using EventBookSystem.Common.DTO;
 using EventBookSystem.Core.Service.Services.Interfaces;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 using Moq;
 
 namespace EventBookSystem.Tests.Controllers
@@ -11,11 +12,13 @@ namespace EventBookSystem.Tests.Controllers
     {
         private readonly Mock<IEventService> _mockEventService;
         private readonly EventsController _eventsController;
+        private readonly IMemoryCache _memoryCache;
 
         public EventsControllerTests()
         {
+            _memoryCache = new MemoryCache(new MemoryCacheOptions());
             _mockEventService = new Mock<IEventService>();
-            _eventsController = new EventsController(_mockEventService.Object);
+            _eventsController = new EventsController(_mockEventService.Object, _memoryCache);
         }
 
         [Fact]
@@ -170,6 +173,59 @@ namespace EventBookSystem.Tests.Controllers
 
             // Assert
             result.Should().BeOfType<NoContentResult>();
+        }
+
+        [Fact]
+        public async Task GetAllEvents_ShouldCacheData()
+        {
+            // Arrange
+            var testEvents = new List<EventDto> { new EventDto { Id = Guid.NewGuid(), Name = "Test Event" } };
+            _mockEventService.Setup(s => s.GetAllEventsAsync(false)).ReturnsAsync(testEvents);
+
+            // Act
+            var result1 = await _eventsController.GetAllEvents() as OkObjectResult;
+            var result2 = await _eventsController.GetAllEvents() as OkObjectResult;
+
+            // Assert
+            Assert.NotNull(result1);
+            Assert.NotNull(result2);
+            Assert.Equal(testEvents, result1.Value);
+            Assert.Equal(testEvents, result2.Value);
+            _mockEventService.Verify(s => s.GetAllEventsAsync(false), Times.Once);
+        }
+
+        [Fact]
+        public async Task CreateEvent_ShouldInvalidateCache()
+        {
+            // Arrange
+            var newEvent = new EventForCreationDto { Name = "New Event" };
+            var createdEvent = new EventDto { Id = Guid.NewGuid(), Name = "New Event" };
+            _mockEventService.Setup(s => s.CreateEventAsync(newEvent)).ReturnsAsync(createdEvent);
+
+            // Act
+            var result = await _eventsController.CreateEventAsync(newEvent);
+
+            // Assert
+            Assert.IsType<OkObjectResult>(result);
+            var cachedEvents = _memoryCache.Get<List<EventDto>>("AllEvents");
+            Assert.Null(cachedEvents); 
+        }
+
+        [Fact]
+        public async Task UpdateEvent_ShouldInvalidateCache()
+        {
+            // Arrange
+            var eventId = Guid.NewGuid();
+            var updatedEvent = new EventForUpdateDto { Name = "Updated Event" };
+            _mockEventService.Setup(s => s.UpdateEventAsync(eventId, updatedEvent, true)).Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _eventsController.UpdateEventAsync(eventId, updatedEvent);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+            var cachedEvent = _memoryCache.Get<EventDto>($"Event_{eventId}");
+            Assert.Null(cachedEvent);
         }
     }
 }
