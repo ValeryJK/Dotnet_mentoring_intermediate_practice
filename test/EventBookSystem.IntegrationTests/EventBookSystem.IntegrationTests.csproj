@@ -9,7 +9,6 @@
 	<CopyOutputSymbolsToPublishDirectory>true</CopyOutputSymbolsToPublishDirectory>
 	<CopyOutputSymbolsToOutputDirectory>true</CopyOutputSymbolsToOutputDirectory>
     <IsTestProject>true</IsTestProject>
-	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>
