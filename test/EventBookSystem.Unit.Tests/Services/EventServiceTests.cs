@@ -5,7 +5,6 @@ using EventBookSystem.Core.Service.Services;
 using EventBookSystem.DAL.Entities;
 using EventBookSystem.DAL.Repositories.Interfaces;
 using FluentAssertions;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -16,7 +15,6 @@ namespace EventBookSystem.Tests.Services
         private readonly Mock<IEventRepository> _mockEventRepository;
         private readonly Mock<ILogger<EventService>> _mockLogger;
         private readonly IMapper _mapper;
-        private readonly IMemoryCache _cache;
         private readonly EventService _eventService;
 
         public EventServiceTests()
@@ -31,7 +29,6 @@ namespace EventBookSystem.Tests.Services
             });
 
             _mapper = mappingConfig.CreateMapper();
-            _cache = new MemoryCache(new MemoryCacheOptions());
             _eventService = new EventService(_mockEventRepository.Object, _mockLogger.Object, _mapper);
         }
 
@@ -68,8 +65,7 @@ namespace EventBookSystem.Tests.Services
 
             // Assert
             result.Should().NotBeNull();
-            result.Id.Should().NotBeEmpty();
-            result.Id.Should().Be(eventId);
+            result?.Id.Should().Be(eventId);
         }
 
         [Fact]
@@ -77,7 +73,6 @@ namespace EventBookSystem.Tests.Services
         {
             // Arrange
             var eventForCreation = new EventForCreationDto { Name = "Event 1" };
-            var eventEntity = new Event { Id = Guid.NewGuid(), Name = "Event 1" };
 
             _mockEventRepository.Setup(repo => repo.Create(It.IsAny<Event>()));
             _mockEventRepository.Setup(repo => repo.SaveAsync()).Returns(Task.CompletedTask);

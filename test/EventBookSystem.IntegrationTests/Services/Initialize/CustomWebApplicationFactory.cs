@@ -1,4 +1,5 @@
-﻿using EventBookSystem.DAL.DataContext;
+﻿using EventBookSystem.API.ActionFilters;
+using EventBookSystem.DAL.DataContext;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,8 @@ namespace EventBookSystem.IntegrationTests.Services.Initialize
                 {
                     options.UseInMemoryDatabase("InMemoryDbForTesting");
                 });
+
+                services.AddScoped<SpecialExceptionFilter>();
 
                 var sp = services.BuildServiceProvider();
 

@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using EventBookSystem.API;
+﻿using EventBookSystem.API;
 using EventBookSystem.Common.Models;
 using EventBookSystem.Core.Service.Services.Interfaces;
 using EventBookSystem.DAL.DataContext;
@@ -15,15 +14,12 @@ namespace EventBookSystem.IntegrationTests.Services
     {
         private readonly ICartService _cartService;
         private readonly MainDBContext _context;
-        private readonly IMapper _mapper;
 
         public CartServiceIntegrationTests(CustomWebApplicationFactory<Program> factory)
         {
             var scope = factory.Services.CreateScope();
             _context = scope.ServiceProvider.GetRequiredService<MainDBContext>();
             _cartService = scope.ServiceProvider.GetRequiredService<ICartService>();
-            _mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
-
             _context.Database.EnsureCreated();
         }
 
@@ -32,35 +28,35 @@ namespace EventBookSystem.IntegrationTests.Services
         {
             // Arrange
             var cart = new Cart
-                { 
-                    Id = Guid.NewGuid() 
-                };
+            {
+                Id = Guid.NewGuid()
+            };
             await _context.Carts.AddAsync(cart);
             await _context.SaveChangesAsync();
 
-            var seat = new Seat 
-                { 
-                    Id = Guid.NewGuid(), 
-                    Row = 1, 
-                    Number = 1, 
-                    Price = new Price 
-                        { 
-                            Name = "VIP", 
-                            Amount = 100 
-                        }, 
-                    Status = SeatStatus.Available 
-                };
+            var seat = new Seat
+            {
+                Id = Guid.NewGuid(),
+                Row = 1,
+                Number = 1,
+                Price = new Price
+                {
+                    Name = "VIP",
+                    Amount = 100
+                },
+                Status = SeatStatus.Available
+            };
             await _context.Seats.AddAsync(seat);
             await _context.SaveChangesAsync();
 
-            var cartItem = new CartItem 
-                { 
-                    Id = Guid.NewGuid(), 
-                    SeatId = seat.Id, 
-                    EventId = Guid.NewGuid(), 
-                    CartId = cart.Id, 
-                    DateUTC = DateTime.UtcNow 
-                };
+            var cartItem = new CartItem
+            {
+                Id = Guid.NewGuid(),
+                SeatId = seat.Id,
+                EventId = Guid.NewGuid(),
+                CartId = cart.Id,
+                DateUTC = DateTime.UtcNow
+            };
             await _context.CartItems.AddAsync(cartItem);
             await _context.SaveChangesAsync();
 
@@ -95,12 +91,12 @@ namespace EventBookSystem.IntegrationTests.Services
             await _context.Seats.AddAsync(seat);
             await _context.SaveChangesAsync();
 
-            var seatRequest = new SeatRequest 
-                { 
-                    SeatId = seat.Id, 
-                    EventId = Guid.NewGuid(), 
-                    PriceId = Guid.NewGuid() 
-                };
+            var seatRequest = new SeatRequest
+            {
+                SeatId = seat.Id,
+                EventId = Guid.NewGuid(),
+                PriceId = Guid.NewGuid()
+            };
 
             // Act
             var updatedCart = await _cartService.AddSeatToCartAsync(cart.UUIDKey, seatRequest);
@@ -115,7 +111,7 @@ namespace EventBookSystem.IntegrationTests.Services
         {
             // Arrange
             var cart = new Cart { Id = Guid.NewGuid() };
-            _context.Carts.Add(cart);
+            await _context.Carts.AddAsync(cart);
             await _context.SaveChangesAsync();
 
             var seat = new Seat
@@ -130,18 +126,18 @@ namespace EventBookSystem.IntegrationTests.Services
                 },
                 Status = SeatStatus.Available
             };
-            _context.Seats.Add(seat);
+            await _context.Seats.AddAsync(seat);
             await _context.SaveChangesAsync();
 
-            var cartItem = new CartItem 
-                { 
-                    Id = Guid.NewGuid(), 
-                    SeatId = seat.Id, 
-                    EventId = Guid.NewGuid(), 
-                    CartId = cart.Id, 
-                    DateUTC = DateTime.UtcNow 
-                };
-            _context.CartItems.Add(cartItem);
+            var cartItem = new CartItem
+            {
+                Id = Guid.NewGuid(),
+                SeatId = seat.Id,
+                EventId = Guid.NewGuid(),
+                CartId = cart.Id,
+                DateUTC = DateTime.UtcNow
+            };
+            await _context.CartItems.AddAsync(cartItem);
             await _context.SaveChangesAsync();
 
             // Act
@@ -174,14 +170,14 @@ namespace EventBookSystem.IntegrationTests.Services
             await _context.Seats.AddAsync(seat);
             await _context.SaveChangesAsync();
 
-            var cartItem = new CartItem 
-                { 
-                    Id = Guid.NewGuid(), 
-                    SeatId = seat.Id, 
-                    EventId = Guid.NewGuid(), 
-                    CartId = cart.Id, 
-                    DateUTC = DateTime.UtcNow 
-                };
+            var cartItem = new CartItem
+            {
+                Id = Guid.NewGuid(),
+                SeatId = seat.Id,
+                EventId = Guid.NewGuid(),
+                CartId = cart.Id,
+                DateUTC = DateTime.UtcNow
+            };
             await _context.CartItems.AddAsync(cartItem);
             await _context.SaveChangesAsync();
 

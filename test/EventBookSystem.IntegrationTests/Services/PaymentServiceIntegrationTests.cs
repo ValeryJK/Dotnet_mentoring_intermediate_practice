@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using EventBookSystem.API;
-using EventBookSystem.Core.Service.MappingProfile;
+﻿using EventBookSystem.API;
 using EventBookSystem.Core.Service.Services.Interfaces;
 using EventBookSystem.DAL.DataContext;
 using EventBookSystem.Data.Entities;
@@ -15,19 +13,12 @@ namespace EventBookSystem.IntegrationTests.Services
     {
         private readonly IPaymentService _paymentService;
         private readonly MainDBContext _context;
-        private readonly IMapper _mapper;
 
         public PaymentServiceIntegrationTests(CustomWebApplicationFactory<Program> factory)
         {
             var scope = factory.Services.CreateScope();
             _context = scope.ServiceProvider.GetRequiredService<MainDBContext>();
             _paymentService = scope.ServiceProvider.GetRequiredService<IPaymentService>();
-            _mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
-
-            var mappingConfig = new MapperConfiguration(mc =>
-            {
-                mc.AddProfile(new MappingCoreProfile());
-            });
 
             _context.Database.EnsureCreated();
         }
