@@ -7,14 +7,9 @@ namespace EventBookSystem.IntegrationTests.Repositories.Initialize
 {
     public class DatabaseSeeder
     {
-        private readonly IServiceProvider _serviceProvider;
+        public DatabaseSeeder()  { }
 
-        public DatabaseSeeder(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
-
-        public void SeedDatabase(MainDBContext context, int count = 10)
+        public void SeedDatabase(MainDBContext context, int count = 5000)
         {
             var eventIds = new List<Guid>();
             var venueIds = new List<Guid>();

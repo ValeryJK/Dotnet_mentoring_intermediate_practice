@@ -16,8 +16,8 @@ namespace EventBookSystem.IntegrationTests.Repositories.Initialize
             ServiceProvider = TestServiceProvider.CreateServiceProvider();
 
             _context = GetDbContext();
-            _databaseManager = new DatabaseManager(ServiceProvider);
-            _databaseSeeder = new DatabaseSeeder(ServiceProvider);
+            _databaseManager = new DatabaseManager();
+            _databaseSeeder = new DatabaseSeeder();
 
             _databaseManager.EnsureDatabaseCreated(_context);
         }
@@ -45,13 +45,22 @@ namespace EventBookSystem.IntegrationTests.Repositories.Initialize
 
         public void ClearDatabase(MainDBContext context)
         {
-            _databaseManager.ClearDatabase(_context)
-                .GetAwaiter().GetResult();
+            _databaseManager.ClearDatabase(_context);
         }
 
         public void Dispose()
         {
-            ClearDatabase(_context);
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                ClearDatabase(_context);
+                _context.Dispose();
+            }
         }
     }
 }
