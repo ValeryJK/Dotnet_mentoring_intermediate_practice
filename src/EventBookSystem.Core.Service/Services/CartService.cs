@@ -5,7 +5,9 @@ using EventBookSystem.Core.Service.Services.Interfaces;
 using EventBookSystem.Data.Entities;
 using EventBookSystem.Data.Enums;
 using EventBookSystem.Data.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Data;
 using PaymentStatus = EventBookSystem.Data.Enums.PaymentStatus;
 
 namespace EventBookSystem.Core.Service.Services
@@ -64,7 +66,56 @@ namespace EventBookSystem.Core.Service.Services
             return _mapper.Map<CartDto>(updatedCart);
         }
 
-        public async Task<Guid?> BookCartAsync(Guid cartId)
+        public async Task<Guid?> BookCartPessimisticConcurrencyAsync(Guid cartId, CancellationToken cancellationToken = default)
+        {
+            using var transaction = await _cartRepository.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
+
+            var cart = await _cartRepository.GetCartById(cartId);
+
+            if (cart is null || !cart.CartItems.Any())
+            {
+                return default;
+            }
+
+            try
+            {
+                var payment = new Payment
+                {
+                    Id = Guid.NewGuid(),
+                    Amount = cart.CartItems.Sum(x => x.Seat.Price.Amount),
+                    PaymentMethod = "VISA",
+                    Status = PaymentStatus.Unpaid,
+                    DateUTC = DateTime.UtcNow
+                };
+
+                _paymentRepository.Create(payment);
+
+                foreach (var item in cart.CartItems)
+                {
+                    if (item.Seat.Status == SeatStatus.Booked || item.Seat.Status == SeatStatus.Sold)
+                    {
+                        throw new InvalidOperationException("Error...");
+                    }
+
+                    item.Seat.Status = SeatStatus.Booked;
+                    item.PaymentId = payment.Id;
+                }
+
+                await _paymentRepository.SaveAsync();
+
+                await transaction.CommitAsync();
+
+                return payment.Id;
+            }
+            catch (Exception)
+            {
+                await transaction.RollbackAsync();
+
+                throw;
+            }
+        }
+
+        public async Task<Guid?> BookCartOptimisticConcurrencyAsync(Guid cartId)
         {
             var cart = await _cartRepository.GetCartById(cartId);
 
@@ -73,26 +124,38 @@ namespace EventBookSystem.Core.Service.Services
                 return default;
             }
 
-            var payment = new Payment
+            try
             {
-                Id = Guid.NewGuid(),
-                Amount = cart.CartItems.Sum(x => x.Seat.Price.Amount),
-                PaymentMethod = "VISA",
-                Status = PaymentStatus.Unpaid,
-                DateUTC = DateTime.UtcNow
-            };
+                var payment = new Payment
+                {
+                    Id = Guid.NewGuid(),
+                    Amount = cart.CartItems.Sum(x => x.Seat.Price.Amount),
+                    PaymentMethod = "VISA",
+                    Status = PaymentStatus.Unpaid,
+                    DateUTC = DateTime.UtcNow,
+                };
 
-            _paymentRepository.Create(payment);
+                _paymentRepository.Create(payment);
 
-            foreach (var item in cart.CartItems)
-            {
-                item.Seat.Status = SeatStatus.Booked;
-                item.PaymentId = payment.Id;
+                foreach (var item in cart.CartItems)
+                {
+                    if (item.Seat.Status == SeatStatus.Booked || item.Seat.Status == SeatStatus.Sold)
+                    {
+                        throw new InvalidOperationException("Error...");
+                    }
+
+                    item.Seat.Status = SeatStatus.Booked;
+                    item.PaymentId = payment.Id;
+                }
+
+                await _cartRepository.SaveAsync();
+
+                return payment.Id;
             }
-
-            await _paymentRepository.SaveAsync();
-
-            return payment.Id;
+            catch (DbUpdateConcurrencyException ex)
+            {
+                throw new InvalidOperationException("Error ...", ex);
+            }           
         }
 
         public async Task<bool> DeleteSeatFromCartAsync(Guid cartId, Guid eventId, Guid seatId)

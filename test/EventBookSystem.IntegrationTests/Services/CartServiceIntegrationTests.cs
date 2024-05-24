@@ -186,7 +186,7 @@ namespace EventBookSystem.IntegrationTests.Services
             await _context.SaveChangesAsync();
 
             // Act
-            var paymentId = await _cartService.BookCartAsync(cart.UUIDKey);
+            var paymentId = await _cartService.BookCartOptimisticConcurrencyAsync(cart.UUIDKey);
 
             // Assert
             paymentId.Should().NotBeNull();

@@ -30,6 +30,6 @@ namespace EventBookSystem.Data.Repositories
         {
             return await _context.CartItems
                 .Include(x => x.Seat).Where(s => s.PaymentId == paymentId).ToListAsync();
-        }
+        }       
     }
 }

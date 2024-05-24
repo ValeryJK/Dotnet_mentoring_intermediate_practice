@@ -14,5 +14,7 @@ namespace EventBookSystem.Data.Entities
         public PaymentStatus Status { get; set; }
 
         public DateTime DateUTC { get; set; }
+
+        public byte[]? RowVersion { get; set; }
     }
 }

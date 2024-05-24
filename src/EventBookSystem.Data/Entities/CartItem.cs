@@ -21,5 +21,7 @@ namespace EventBookSystem.Data.Entities
         public Cart Cart { get; set; } = null!;
 
         public Seat Seat { get; set; } = null!;
+
+        public byte[]? RowVersion { get; set; }
     }
 }

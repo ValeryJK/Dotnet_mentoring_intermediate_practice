@@ -14,6 +14,8 @@ namespace EventBookSystem.Data.Entities
 
         public DateTime DateUTC { get; set; }
 
+        public byte[]? RowVersion { get; set; }
+
         public ICollection<CartItem> CartItems { get; set; } = new HashSet<CartItem>();
     }
 }

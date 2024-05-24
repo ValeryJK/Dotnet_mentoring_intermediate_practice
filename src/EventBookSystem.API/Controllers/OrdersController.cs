@@ -52,7 +52,7 @@ namespace EventBookSystem.API.Controllers
         [HttpPost("{cartId}/book")]
         public async Task<IActionResult> BookCart(Guid cartId)
         {
-            var paymentId = await _cartService.BookCartAsync(cartId);
+            var paymentId = await _cartService.BookCartPessimisticConcurrencyAsync(cartId);
 
             if (paymentId is null)
             {
