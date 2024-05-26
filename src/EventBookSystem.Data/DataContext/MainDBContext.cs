@@ -19,21 +19,22 @@ namespace EventBookSystem.DAL.DataContext
         {
             base.OnModelCreating(builder);
 
-            builder.Entity<Cart>()
-               .Property(c => c.RowVersion)
-               .IsRowVersion();
+#pragma warning disable
+            //builder.Entity<Cart>()
+            //   .Property(c => c.RowVersion)
+            //   .IsRowVersion();
 
-            builder.Entity<Payment>()
-               .Property(c => c.RowVersion)
-               .IsRowVersion();
+            //builder.Entity<Payment>()
+            //   .Property(c => c.RowVersion)
+            //   .IsRowVersion();
 
-            builder.Entity<Seat>()
-              .Property(c => c.RowVersion)
-              .IsRowVersion();
+            //builder.Entity<Seat>()
+            //  .Property(c => c.RowVersion)
+            //  .IsRowVersion();
 
-            builder.Entity<CartItem>()
-             .Property(c => c.RowVersion)
-             .IsRowVersion();
+            //builder.Entity<CartItem>()
+            // .Property(c => c.RowVersion)
+            // .IsRowVersion();
 
             builder.Entity<CartItem>()
                 .HasOne(ci => ci.Cart)

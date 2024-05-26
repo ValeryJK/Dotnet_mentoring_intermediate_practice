@@ -15,6 +15,7 @@ namespace EventBookSystem.Data.Entities
 
         public DateTime DateUTC { get; set; }
 
-        public byte[]? RowVersion { get; set; }
+#pragma warning disable
+        //public byte[]? RowVersion { get; set; }
     }
 }

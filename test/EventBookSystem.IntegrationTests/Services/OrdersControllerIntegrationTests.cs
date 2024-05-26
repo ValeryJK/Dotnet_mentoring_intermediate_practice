@@ -106,13 +106,13 @@ namespace EventBookSystem.IntegrationTests.Services
 
             var @event = new Event
             {
-                Id= Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 DateUTC = DateTime.UtcNow,
                 Name = "Event 1"
             };
             _context.Events.Add(@event);
             await _context.SaveChangesAsync();
-           
+
             var seatRequest = new SeatRequest
             {
                 SeatId = seat.Id,
@@ -205,7 +205,7 @@ namespace EventBookSystem.IntegrationTests.Services
                 Price = price
             };
             await _context.Seats.AddAsync(seat);
-            await _context.SaveChangesAsync();           
+            await _context.SaveChangesAsync();
 
             var cartItem = new CartItem
             {

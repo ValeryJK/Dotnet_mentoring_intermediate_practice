@@ -17,17 +17,20 @@ namespace EventBookSystem.Core.Service.Services
         private readonly ICartRepository _cartRepository;
         private readonly ICartItemRepository _cartItemRepository;
         private readonly IPaymentRepository _paymentRepository;
-        private readonly ILogger<CartService> _logger;
+        private readonly ILogger<CartService> _logger;       
         private readonly IMapper _mapper;
+        private readonly ILockManager _lockManager;
 
         public CartService(ICartRepository cartRepository, ICartItemRepository cartItemRepository, IPaymentRepository paymentRepository,
-            ILogger<CartService> logger, IMapper mapper)
+            ILogger<CartService> logger, IMapper mapper, ILockManager lockManager)
         {
             _cartRepository = cartRepository;
             _cartItemRepository = cartItemRepository;
-            _paymentRepository = paymentRepository;
+            _paymentRepository = paymentRepository;           
             _logger = logger;
             _mapper = mapper;
+            _lockManager = lockManager;
+            
         }
 
         public async Task<IEnumerable<CartItemDto>> GetCartItemsByCartId(Guid cartId, bool trackChanges = default)
@@ -71,14 +74,24 @@ namespace EventBookSystem.Core.Service.Services
             using var transaction = await _cartRepository.BeginTransactionAsync(IsolationLevel.Serializable, cancellationToken);
 
             var cart = await _cartRepository.GetCartById(cartId);
-
             if (cart is null || !cart.CartItems.Any())
             {
                 return default;
             }
-
+            
             try
             {
+                foreach (var item in cart.CartItems)
+                {
+                    if (item.Seat.Status == SeatStatus.Booked || item.Seat.Status == SeatStatus.Sold)
+                    {
+                        _logger.LogWarning("Seat {SeatId} already booked or sold.", item.SeatId);
+                        throw new InvalidOperationException("Error: Seat already booked or sold.");
+                    }
+
+                    item.Seat.Status = SeatStatus.Booked;
+                }
+
                 var payment = new Payment
                 {
                     Id = Guid.NewGuid(),
@@ -89,29 +102,76 @@ namespace EventBookSystem.Core.Service.Services
                 };
 
                 _paymentRepository.Create(payment);
+                await _paymentRepository.SaveAsync();
 
                 foreach (var item in cart.CartItems)
                 {
-                    if (item.Seat.Status == SeatStatus.Booked || item.Seat.Status == SeatStatus.Sold)
-                    {
-                        throw new InvalidOperationException("Error...");
-                    }
-
-                    item.Seat.Status = SeatStatus.Booked;
                     item.PaymentId = payment.Id;
                 }
 
-                await _paymentRepository.SaveAsync();
-
                 await transaction.CommitAsync();
-
                 return payment.Id;
             }
             catch (Exception)
             {
                 await transaction.RollbackAsync();
-
                 throw;
+            }
+        }
+
+        public async Task<Guid?> BookCartPessimisticLockConcurrencyAsync(Guid cartId, CancellationToken cancellationToken = default)
+        {
+            var cart = await _cartRepository.GetCartById(cartId);
+            if (cart == null || !cart.CartItems.Any())
+            {
+                return default;
+            }
+
+            using var lockCart = await _lockManager.AcquireLockAsync(cart.Id);
+
+            try
+            {               
+                foreach (var item in cart.CartItems)
+                {
+                    using (await _lockManager.AcquireLockAsync(item.SeatId))
+                    {
+                        if (item.Seat.Status == SeatStatus.Booked || item.Seat.Status == SeatStatus.Sold)
+                        {
+                            throw new InvalidOperationException("Error: Seat already booked or sold.");
+                        }
+
+                        item.Seat.Status = SeatStatus.Booked;
+                    }
+                }
+
+                var payment = new Payment
+                {
+                    Id = Guid.NewGuid(),
+                    Amount = cart.CartItems.Sum(x => x.Seat.Price.Amount),
+                    PaymentMethod = "VISA",
+                    Status = PaymentStatus.Unpaid,
+                    DateUTC = DateTime.UtcNow
+                };
+
+                _paymentRepository.Create(payment);
+                await _paymentRepository.SaveAsync();
+
+                foreach (var item in cart.CartItems)
+                {
+                    item.PaymentId = payment.Id;
+                }
+
+                return payment.Id;
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogError(ex, "Booking failed due to seat status conflict.");
+                return default(Guid?);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred while booking the cart.");
+                return default(Guid?);
             }
         }
 
@@ -155,7 +215,7 @@ namespace EventBookSystem.Core.Service.Services
             catch (DbUpdateConcurrencyException ex)
             {
                 throw new InvalidOperationException("Error ...", ex);
-            }           
+            }
         }
 
         public async Task<bool> DeleteSeatFromCartAsync(Guid cartId, Guid eventId, Guid seatId)

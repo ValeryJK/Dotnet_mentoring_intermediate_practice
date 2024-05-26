@@ -22,6 +22,7 @@ namespace EventBookSystem.Data.Entities
 
         public Seat Seat { get; set; } = null!;
 
-        public byte[]? RowVersion { get; set; }
+#pragma warning disable
+        //public byte[]? RowVersion { get; set; }
     }
 }

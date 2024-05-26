@@ -21,6 +21,7 @@ namespace EventBookSystem.Data.Entities
 
         public Price Price { get; set; } = null!;
 
-        public byte[]? RowVersion { get; set; }
+#pragma warning disable
+        //public byte[]? RowVersion { get; set; }
     }
 }
