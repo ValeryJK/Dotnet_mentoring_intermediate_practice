@@ -1,6 +1,8 @@
 using EventBookSystem.API.ActionFilters;
 using EventBookSystem.API.Extensions;
 using EventBookSystem.Core.Service;
+using EventBookSystem.Core.Service.Services.Email;
+using EventBookSystem.Core.Service.Services.Notifications;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Reflection;
@@ -78,6 +80,12 @@ namespace EventBookSystem.API
                   }
                 });
             });
+
+            builder.Services.AddScoped<SpecialExceptionFilter>();
+            builder.Services.AddSingleton<MessageQueueHandler>();
+            builder.Services.AddSingleton<EmailService>();
+            builder.Services.AddSingleton<NotificationHandler>();
+            builder.Services.AddHostedService<BackgroundService.NotificationBackgroundService>();
 
             builder.Logging.AddConsole();
 
