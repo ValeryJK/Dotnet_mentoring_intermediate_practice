@@ -18,7 +18,7 @@ namespace EventBookSystem.Tests.Controllers
         {
             _memoryCache = new MemoryCache(new MemoryCacheOptions());
             _mockEventService = new Mock<IEventService>();
-            _eventsController = new EventsController(_mockEventService.Object, _memoryCache);
+            _eventsController = new EventsController(_mockEventService.Object);
         }
 
         [Fact]
@@ -122,25 +122,6 @@ namespace EventBookSystem.Tests.Controllers
 
             // Assert
             result.Should().BeOfType<NoContentResult>();
-        }
-
-        [Fact]
-        public async Task GetAllEvents_ShouldCacheData()
-        {
-            // Arrange
-            var testEvents = new List<EventDto> { new EventDto { Id = Guid.NewGuid(), Name = "Test Event" } };
-            _mockEventService.Setup(s => s.GetAllEventsAsync(false)).ReturnsAsync(testEvents);
-
-            // Act
-            var result1 = await _eventsController.GetAllEvents() as OkObjectResult;
-            var result2 = await _eventsController.GetAllEvents() as OkObjectResult;
-
-            // Assert
-            Assert.NotNull(result1);
-            Assert.NotNull(result2);
-            Assert.Equal(testEvents, result1.Value);
-            Assert.Equal(testEvents, result2.Value);
-            _mockEventService.Verify(s => s.GetAllEventsAsync(false), Times.Once);
         }
 
         [Fact]
