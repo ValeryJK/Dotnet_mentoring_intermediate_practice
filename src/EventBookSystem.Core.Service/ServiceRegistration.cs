@@ -21,6 +21,7 @@ namespace EventBookSystem.Core.Service
             services.Configure<CacheSettings>(configuration.GetSection("CacheSettings"));
             services.AddAutoMapper(typeof(MappingCoreProfile));
             services.AddMemoryCache();
+            services.AddScoped<ILockManager, LockManager>();
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<IVenueService, VenueService>();
             services.AddScoped<ICartService, CartService>();

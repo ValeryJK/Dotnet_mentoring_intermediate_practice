@@ -9,7 +9,11 @@ namespace EventBookSystem.Core.Service.Services.Interfaces
 
         Task<CartDto?> AddSeatToCartAsync(Guid cartId, SeatRequest payload);
 
-        Task<Guid?> BookCartAsync(Guid cartId);
+        Task<Guid?> BookCartPessimisticConcurrencyAsync(Guid cartId, CancellationToken cancellationToken = default);
+
+        Task<Guid?> BookCartPessimisticLockConcurrencyAsync(Guid cartId, CancellationToken cancellationToken = default);
+
+        Task<Guid?> BookCartOptimisticConcurrencyAsync(Guid cartId);
 
         Task<bool> DeleteSeatFromCartAsync(Guid cartId, Guid eventId, Guid seatId);
     }
