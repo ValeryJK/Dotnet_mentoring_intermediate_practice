@@ -6,6 +6,7 @@ using EventBookSystem.Core.Service.Services;
 using EventBookSystem.DAL.Entities;
 using EventBookSystem.DAL.Repositories.Interfaces;
 using FluentAssertions;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -18,6 +19,7 @@ namespace EventBookSystem.Tests.Services
         private readonly Mock<ILogger<EventService>> _mockLogger;
         private readonly IMapper _mapper;
         private readonly EventService _eventService;
+        private readonly MemoryCache _cache;
         private readonly Mock<IOptionsMonitor<CacheSettings>> _mockCacheSettings;
 
         public EventServiceTests()

@@ -30,10 +30,7 @@ namespace EventBookSystem.IntegrationTests.Services
             var cart = new Cart
             {
                 Id = Guid.NewGuid()
-            };
-            {
-                Id = Guid.NewGuid()
-            };
+            };            
             await _context.Carts.AddAsync(cart);
             await _context.SaveChangesAsync();
 
@@ -49,29 +46,9 @@ namespace EventBookSystem.IntegrationTests.Services
                 },
                 Status = SeatStatus.Available
             };
-            var seat = new Seat
-            {
-                Id = Guid.NewGuid(),
-                Row = 1,
-                Number = 1,
-                Price = new Price
-                {
-                    Name = "VIP",
-                    Amount = 100
-                },
-                Status = SeatStatus.Available
-            };
             await _context.Seats.AddAsync(seat);
             await _context.SaveChangesAsync();
 
-            var cartItem = new CartItem
-            {
-                Id = Guid.NewGuid(),
-                SeatId = seat.Id,
-                EventId = Guid.NewGuid(),
-                CartId = cart.Id,
-                DateUTC = DateTime.UtcNow
-            };
             var cartItem = new CartItem
             {
                 Id = Guid.NewGuid(),
@@ -114,12 +91,6 @@ namespace EventBookSystem.IntegrationTests.Services
             await _context.Seats.AddAsync(seat);
             await _context.SaveChangesAsync();
 
-            var seatRequest = new SeatRequest
-            {
-                SeatId = seat.Id,
-                EventId = Guid.NewGuid(),
-                PriceId = Guid.NewGuid()
-            };
             var seatRequest = new SeatRequest
             {
                 SeatId = seat.Id,
@@ -199,14 +170,6 @@ namespace EventBookSystem.IntegrationTests.Services
             await _context.Seats.AddAsync(seat);
             await _context.SaveChangesAsync();
 
-            var cartItem = new CartItem
-            {
-                Id = Guid.NewGuid(),
-                SeatId = seat.Id,
-                EventId = Guid.NewGuid(),
-                CartId = cart.Id,
-                DateUTC = DateTime.UtcNow
-            };
             var cartItem = new CartItem
             {
                 Id = Guid.NewGuid(),
