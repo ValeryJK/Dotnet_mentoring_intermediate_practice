@@ -7,18 +7,15 @@ using Polly.Retry;
 namespace EventBookSystem.IntegrationTests.Repositories.Initialize
 {
     public class DatabaseManager
-    {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly AsyncRetryPolicy _retryPolicy;
+    {   
+        private readonly RetryPolicy _retryPolicy;
 
-        public DatabaseManager(IServiceProvider serviceProvider)
+        public DatabaseManager()
         {
-            _serviceProvider = serviceProvider;
-
             _retryPolicy = Policy
                 .Handle<SqlException>(ex => ex.Number == 1205)
                 .Or<DbUpdateConcurrencyException>()
-                .WaitAndRetryAsync(5, retryAttempt => TimeSpan.FromSeconds(5),
+                .WaitAndRetry(5, retryAttempt => TimeSpan.FromSeconds(5),
                     (exception, timeSpan, retryCount, context) =>
                     {
                         Console.WriteLine($"Retry {retryCount} due to {exception.GetType().Name}: {exception.Message}");
@@ -31,19 +28,24 @@ namespace EventBookSystem.IntegrationTests.Repositories.Initialize
             context.Database.Migrate();
         }
 
-        public async Task ClearDatabase(MainDBContext context)
+        public void ClearDatabase(MainDBContext context)
         {
-            await _retryPolicy.ExecuteAsync(async () =>
+            _retryPolicy.Execute(() =>
                 {
                     context.Database.ExecuteSqlRaw("EXEC sp_MSforeachtable 'ALTER TABLE ? NOCHECK CONSTRAINT ALL'");
 
                     var tableNames = context.Model.GetEntityTypes().Select(t => t.GetTableName())
                         .Where(n => !string.IsNullOrEmpty(n)).ToList();
 
-                    tableNames.ForEach(tableName => context.Database.ExecuteSqlRaw($"DELETE FROM [{tableName}]"));
-                    await context.Database.ExecuteSqlRawAsync("EXEC sp_MSforeachtable 'ALTER TABLE ? WITH CHECK CHECK CONSTRAINT ALL'");
+                    foreach (var tableName in tableNames)
+                    {
+                        var deleteCommand = $"EXEC('DELETE FROM [{tableName}]')";
+                        context.Database.ExecuteSqlRaw(deleteCommand);
+                    }
 
-                    await context.SaveChangesAsync();
+                    context.Database.ExecuteSqlRaw("EXEC sp_MSforeachtable 'ALTER TABLE ? WITH CHECK CHECK CONSTRAINT ALL'");
+
+                    context.SaveChanges();
 
                     context.ChangeTracker.Clear();
                 });

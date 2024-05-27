@@ -1,21 +1,17 @@
-﻿using EventBookSystem.DAL.DataContext;
-using EventBookSystem.DAL.Repositories;
+﻿using EventBookSystem.DAL.Repositories;
 using EventBookSystem.IntegrationTests.Repositories.Initialize;
 using FluentAssertions;
 
 namespace EventBookSystem.IntegrationTests.Repositories
 {
     [Collection("Database collection")]
-    public class VenueRepositoryIntegrationTests : IClassFixture<TestFixture>, IDisposable
+    public class VenueRepositoryIntegrationTests : IClassFixture<TestFixture>
     {
-        private readonly TestFixture _fixture;  
-        private readonly MainDBContext _context;
+        private readonly TestFixture _fixture;
 
         public VenueRepositoryIntegrationTests(TestFixture fixture)
         {
             _fixture = fixture;
-            _context = _fixture.GetDbContext();
-            _fixture.ClearAndSeed(_context);
         }
 
         [Fact]
@@ -42,7 +38,7 @@ namespace EventBookSystem.IntegrationTests.Repositories
 
             var repository = new VenueRepository(context);
 
-            _fixture.ClearAndSeed(context);            
+            _fixture.ClearAndSeed(context);
 
             var venue = (await repository.GetAllVenuesAsync(false)).First();
 
@@ -51,11 +47,6 @@ namespace EventBookSystem.IntegrationTests.Repositories
 
             // Assert
             result.Should().NotBeNull();
-        }
-
-        public void Dispose()
-        {
-            _fixture.ClearDatabase(_context);
         }
     }
 }

@@ -6,7 +6,6 @@ using EventBookSystem.Core.Service.Services;
 using EventBookSystem.DAL.Entities;
 using EventBookSystem.DAL.Repositories.Interfaces;
 using FluentAssertions;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -18,7 +17,6 @@ namespace EventBookSystem.Tests.Services
         private readonly Mock<IEventRepository> _mockEventRepository;
         private readonly Mock<ILogger<EventService>> _mockLogger;
         private readonly IMapper _mapper;
-        private readonly IMemoryCache _cache;
         private readonly EventService _eventService;
         private readonly Mock<IOptionsMonitor<CacheSettings>> _mockCacheSettings;
 
@@ -64,7 +62,7 @@ namespace EventBookSystem.Tests.Services
         }
 
         [Fact]
-        public async Task GetEventByIdAsync_ShouldReturnEvent()
+        public async Task GetEventByIdAsync_ShouldReturnNotNull()
         {
             // Arrange
             var eventId = Guid.NewGuid();
@@ -77,16 +75,29 @@ namespace EventBookSystem.Tests.Services
 
             // Assert
             result.Should().NotBeNull();
-            result.Id.Should().NotBeEmpty();
-            result.Id.Should().Be(eventId);
         }
 
         [Fact]
-        public async Task CreateEventAsync_ShouldReturnCreatedEvent()
+        public async Task GetEventByIdAsync_ShouldReturnCorrectId()
+        {
+            // Arrange
+            var eventId = Guid.NewGuid();
+            var eventItem = new Event { Id = eventId, Name = "Event 1" };
+
+            _mockEventRepository.Setup(repo => repo.GetEventByIdAsync(eventId, false)).ReturnsAsync(eventItem);
+
+            // Act
+            var result = await _eventService.GetEventByIdAsync(eventId, false);
+
+            // Assert
+            result!.Id.Should().Be(eventId);
+        }
+
+        [Fact]
+        public async Task CreateEventAsync_ShouldReturnNotNull()
         {
             // Arrange
             var eventForCreation = new EventForCreationDto { Name = "Event 1" };
-            var eventEntity = new Event { Id = Guid.NewGuid(), Name = "Event 1" };
 
             _mockEventRepository.Setup(repo => repo.Create(It.IsAny<Event>()));
             _mockEventRepository.Setup(repo => repo.SaveAsync()).Returns(Task.CompletedTask);
@@ -96,11 +107,26 @@ namespace EventBookSystem.Tests.Services
 
             // Assert
             result.Should().NotBeNull();
-            result.Name.Should().Be(eventForCreation.Name);
         }
 
         [Fact]
-        public async Task UpdateEventAsync_ShouldUpdateEvent()
+        public async Task CreateEventAsync_ShouldReturnCorrectName()
+        {
+            // Arrange
+            var eventForCreation = new EventForCreationDto { Name = "Event 1" };
+
+            _mockEventRepository.Setup(repo => repo.Create(It.IsAny<Event>()));
+            _mockEventRepository.Setup(repo => repo.SaveAsync()).Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _eventService.CreateEventAsync(eventForCreation);
+
+            // Assert
+            result!.Name.Should().Be(eventForCreation.Name);
+        }
+
+        [Fact]
+        public async Task UpdateEventAsync_ShouldNotThrow()
         {
             // Arrange
             var eventId = Guid.NewGuid();
@@ -115,11 +141,28 @@ namespace EventBookSystem.Tests.Services
 
             // Assert
             await action.Should().NotThrowAsync();
+        }
+
+        [Fact]
+        public async Task UpdateEventAsync_ShouldUpdateName()
+        {
+            // Arrange
+            var eventId = Guid.NewGuid();
+            var eventForUpdate = new EventForUpdateDto { Name = "Updated Event 1" };
+            var eventEntity = new Event { Id = eventId, Name = "Event 1" };
+
+            _mockEventRepository.Setup(repo => repo.GetEventByIdAsync(eventId, false)).ReturnsAsync(eventEntity);
+            _mockEventRepository.Setup(repo => repo.SaveAsync()).Returns(Task.CompletedTask);
+
+            // Act
+            await _eventService.UpdateEventAsync(eventId, eventForUpdate, false);
+
+            // Assert
             eventEntity.Name.Should().Be(eventForUpdate.Name);
         }
 
         [Fact]
-        public async Task DeleteEventAsync_ShouldDeleteEvent()
+        public async Task DeleteEventAsync_ShouldNotThrow()
         {
             // Arrange
             var eventId = Guid.NewGuid();

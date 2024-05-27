@@ -1,21 +1,17 @@
-﻿using EventBookSystem.DAL.DataContext;
-using EventBookSystem.DAL.Repositories;
+﻿using EventBookSystem.DAL.Repositories;
 using EventBookSystem.IntegrationTests.Repositories.Initialize;
 using FluentAssertions;
 
 namespace EventBookSystem.IntegrationTests.Repositories
 {
     [Collection("Database collection")]
-    public class EventRepositoryIntegrationTests : IClassFixture<TestFixture>, IDisposable
+    public class EventRepositoryIntegrationTests : IClassFixture<TestFixture>
     {
         private readonly TestFixture _fixture;
-        private readonly MainDBContext _context;
 
         public EventRepositoryIntegrationTests(TestFixture fixture)
         {
             _fixture = fixture;
-            _context = _fixture.GetDbContext();
-            _fixture.ClearAndSeed(_context);
         }
 
         [Fact]
@@ -68,11 +64,6 @@ namespace EventBookSystem.IntegrationTests.Repositories
 
             // Assert
             result.Should().NotBeNull();
-        }
-
-        public void Dispose()
-        {
-            _fixture.ClearDatabase(_context);
         }
     }
 }

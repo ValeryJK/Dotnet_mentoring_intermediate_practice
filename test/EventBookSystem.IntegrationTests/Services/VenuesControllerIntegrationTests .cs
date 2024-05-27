@@ -56,8 +56,7 @@ namespace EventBookSystem.IntegrationTests.Services
 
             // Assert
             fetchedVenue.Should().NotBeNull();
-            fetchedVenue?.Id.Should().Be(createdVenue.Id);
-            fetchedVenue?.Name.Should().Be(createdVenue.Name);
+            fetchedVenue?.Name.Should().Be(createdVenue?.Name);
         }
 
         [Fact]

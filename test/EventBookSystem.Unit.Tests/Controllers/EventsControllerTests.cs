@@ -22,7 +22,26 @@ namespace EventBookSystem.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetAllEvents_ShouldReturnOkResultWithEvents()
+        public async Task GetAllEvents_ShouldReturnOkResult()
+        {
+            // Arrange
+            var events = new List<EventDto>
+            {
+                new EventDto { Id = Guid.NewGuid(), Name = "Event 1" },
+                new EventDto { Id = Guid.NewGuid(), Name = "Event 2" }
+            };
+
+            _mockEventService.Setup(service => service.GetAllEventsAsync(false)).ReturnsAsync(events);
+
+            // Act
+            var result = await _eventsController.GetAllEvents();
+
+            // Assert
+            result.Should().BeOfType<OkObjectResult>();
+        }
+
+        [Fact]
+        public async Task GetAllEvents_ShouldReturnEvents()
         {
             // Arrange
             var events = new List<EventDto>
@@ -43,7 +62,23 @@ namespace EventBookSystem.Tests.Controllers
         }
 
         [Fact]
-        public async Task GetEventByIdAsync_ShouldReturnOkResultWithEvent()
+        public async Task GetEventByIdAsync_ShouldReturnOkResult()
+        {
+            // Arrange
+            var eventId = Guid.NewGuid();
+            var eventDto = new EventDto { Id = eventId, Name = "Event 1" };
+
+            _mockEventService.Setup(service => service.GetEventByIdAsync(eventId, false)).ReturnsAsync(eventDto);
+
+            // Act
+            var result = await _eventsController.GetEventByIdAsync(eventId);
+
+            // Assert
+            result.Should().BeOfType<OkObjectResult>();
+        }
+
+        [Fact]
+        public async Task GetEventByIdAsync_ShouldReturnEvent()
         {
             // Arrange
             var eventId = Guid.NewGuid();
@@ -76,7 +111,23 @@ namespace EventBookSystem.Tests.Controllers
         }
 
         [Fact]
-        public async Task CreateEventAsync_ShouldReturnOkResultWithCreatedEvent()
+        public async Task CreateEventAsync_ShouldReturnOkResult()
+        {
+            // Arrange
+            var eventForCreation = new EventForCreationDto { Name = "Event 1" };
+            var createdEvent = new EventDto { Id = Guid.NewGuid(), Name = "Event 1" };
+
+            _mockEventService.Setup(service => service.CreateEventAsync(eventForCreation)).ReturnsAsync(createdEvent);
+
+            // Act
+            var result = await _eventsController.CreateEventAsync(eventForCreation);
+
+            // Assert
+            result.Should().BeOfType<OkObjectResult>();
+        }
+
+        [Fact]
+        public async Task CreateEventAsync_ShouldReturnCreatedEvent()
         {
             // Arrange
             var eventForCreation = new EventForCreationDto { Name = "Event 1" };

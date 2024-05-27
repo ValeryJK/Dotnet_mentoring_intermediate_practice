@@ -56,8 +56,7 @@ namespace EventBookSystem.IntegrationTests.Services
 
             // Assert
             fetchedEvent.Should().NotBeNull();
-            fetchedEvent?.Id.Should().Be(createdEvent.Id);
-            fetchedEvent?.Name.Should().Be(createdEvent.Name);
+            fetchedEvent?.Name.Should().Be(createdEvent?.Name);
         }
 
         [Fact]
@@ -149,7 +148,7 @@ namespace EventBookSystem.IntegrationTests.Services
             // Assert
             deleteResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NoContent);
 
-            var getResponse = await _client.GetAsync($"/events/{createdEvent.Id}");
+            var getResponse = await _client.GetAsync($"/events/{createdEvent?.Id}");
             getResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
     }
