@@ -1,22 +1,28 @@
-﻿using EventBookSystem.Common.Models;
+﻿using EventBookSystem.Common.Common;
+using EventBookSystem.Common.Models;
+using EventBookSystem.Core.Service.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
 namespace EventBookSystem.Core.Service.Services.Email
 {
-    public class EmailService
+    public class EmailService : IEmailService
     {
-        private readonly IConfiguration _configuration;
+        private readonly SendGridSettings _sendGridSettings;
+        private readonly ILogger<EmailService> _logger;
 
-        public EmailService(IConfiguration configuration)
+        public EmailService(IOptions<SendGridSettings> sendGridSettings, ILogger<EmailService> logger)
         {
-            _configuration = configuration;
+            _sendGridSettings = sendGridSettings.Value;
+            _logger = logger;
         }
 
         public async Task<Response> SendEmailAsync(NotificationRequest notification)
         {
-            var apiKey = _configuration["SendGrid:ApiKey"];
+            var apiKey = _sendGridSettings.ApiKey;
 
             if (string.IsNullOrEmpty(apiKey))
             {
@@ -25,8 +31,8 @@ namespace EventBookSystem.Core.Service.Services.Email
 
             var client = new SendGridClient(apiKey);
 
-            var from = new EmailAddress("no-reply@yourdomain.com", "TestService");
-            var to = new EmailAddress(notification.CustomerEmail, notification.CustomerName);
+            var from = new EmailAddress(notification.From, "TestService");
+            var to = new EmailAddress(notification.To, notification.CustomerName);
             var subject = notification.OperationName;
             var plainTextContent = notification.Content;
             var htmlContent = $"<strong>{notification.Content}</strong>";
@@ -37,8 +43,8 @@ namespace EventBookSystem.Core.Service.Services.Email
             var statusCode = response.StatusCode;
             var responseBody = await response.Body.ReadAsStringAsync();
 
-            Console.WriteLine($"SendGrid Response Status Code: {statusCode}");
-            Console.WriteLine($"SendGrid Response Body: {responseBody}");
+            _logger.LogDebug("SendGrid Response Status Code: {StatusCode}", statusCode);
+            _logger.LogDebug("SendGrid Response Body: {ResponseBody}", responseBody);
 
             return response;
         }
