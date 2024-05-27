@@ -1,4 +1,5 @@
-﻿using EventBookSystem.Core.Service.MappingProfile;
+﻿using EventBookSystem.Common.Settings;
+using EventBookSystem.Core.Service.MappingProfile;
 using EventBookSystem.Core.Service.Services;
 using EventBookSystem.Core.Service.Services.Interfaces;
 using EventBookSystem.DAL;
@@ -17,8 +18,9 @@ namespace EventBookSystem.Core.Service
             services.AddCoreDataServices(configuration, useInMemory);
             services.ConfigureIdentity();
 
+            services.Configure<CacheSettings>(configuration.GetSection("CacheSettings"));
             services.AddAutoMapper(typeof(MappingCoreProfile));
-
+            services.AddMemoryCache();
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<IVenueService, VenueService>();
             services.AddScoped<ICartService, CartService>();

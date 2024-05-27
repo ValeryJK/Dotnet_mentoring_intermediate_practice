@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using EventBookSystem.Common.DTO;
+using EventBookSystem.Common.Settings;
 using EventBookSystem.Core.Service.Services.Interfaces;
 using EventBookSystem.DAL.Entities;
 using EventBookSystem.DAL.Repositories.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace EventBookSystem.Core.Service.Services
 {
@@ -12,26 +15,40 @@ namespace EventBookSystem.Core.Service.Services
         private readonly IEventRepository _eventRepository;
         private readonly ILogger<EventService> _logger;
         private readonly IMapper _mapper;
+        private readonly IMemoryCache _cache;
+        private readonly IOptionsMonitor<CacheSettings> _cacheSettings;
 
-        public EventService(IEventRepository eventRepository, ILogger<EventService> logger, IMapper mapper)
+        public EventService(IEventRepository eventRepository, ILogger<EventService> logger, IMapper mapper, IMemoryCache cache,
+            IOptionsMonitor<CacheSettings> cacheSettings)
         {
             _eventRepository = eventRepository;
             _logger = logger;
             _mapper = mapper;
+            _cache = cache;
+            _cacheSettings = cacheSettings;
         }
 
         public async Task<IEnumerable<EventDto>> GetAllEventsAsync(bool trackChanges = default)
         {
-            var events = await _eventRepository.GetAllEventsAsync(trackChanges);
+            return await _cache.GetOrCreateAsync("AllEvents", async entry =>
+            {
+                entry.SetSlidingExpiration(TimeSpan.FromMinutes(_cacheSettings.CurrentValue.SlidingExpiration));
 
-            return _mapper.Map<IEnumerable<EventDto>>(events);
+                var events = await _eventRepository.GetAllEventsAsync(trackChanges);
+
+                return _mapper.Map<IEnumerable<EventDto>>(events);
+            }) ?? new List<EventDto>();
         }
 
         public async Task<EventDto?> GetEventByIdAsync(Guid eventId, bool trackChanges = default)
         {
-            var eventEntity = await _eventRepository.GetEventByIdAsync(eventId, trackChanges);
+            return await _cache.GetOrCreateAsync($"Event_{eventId}", async entry =>
+            {
+                entry.SetSlidingExpiration(TimeSpan.FromMinutes(_cacheSettings.CurrentValue.SlidingExpiration));
 
-            return eventEntity != null ? _mapper.Map<EventDto>(eventEntity) : null;
+                var eventEntity = await _eventRepository.GetEventByIdAsync(eventId, trackChanges);
+                return eventEntity != null ? _mapper.Map<EventDto>(eventEntity) : null;
+            });
         }
 
         public async Task<IEnumerable<SeatDto>> GetSeatsBySection(Guid eventId, Guid sectionId, bool trackChanges = default)
@@ -47,6 +64,7 @@ namespace EventBookSystem.Core.Service.Services
             _eventRepository.Create(eventEntity);
 
             await _eventRepository.SaveAsync();
+            InvalidateCache();
 
             return _mapper.Map<EventDto>(eventEntity);
         }
@@ -65,6 +83,7 @@ namespace EventBookSystem.Core.Service.Services
             _mapper.Map(eventDto, eventEntity);
 
             await _eventRepository.SaveAsync();
+            InvalidateCache();
         }
 
         public async Task DeleteEventAsync(Guid eventId, bool trackChanges = true)
@@ -76,11 +95,17 @@ namespace EventBookSystem.Core.Service.Services
                 _logger.LogError("Event not found.");
 
                 throw new KeyNotFoundException("Event not found.");
-            }   
+            }
 
             _eventRepository.Delete(eventEntity);
 
             await _eventRepository.SaveAsync();
+            InvalidateCache();
+        }
+
+        private void InvalidateCache()
+        {
+            _cache.Remove("AllEvents");
         }
     }
 }
