@@ -1,4 +1,5 @@
-﻿using EventBookSystem.Common.Common;
+using EventBookSystem.Common.Common;
+using EventBookSystem.Common.Settings;
 using EventBookSystem.Core.Service.MappingProfile;
 using EventBookSystem.Core.Service.Services;
 using EventBookSystem.Core.Service.Services.Interfaces;
@@ -18,9 +19,8 @@ namespace EventBookSystem.Core.Service
             services.AddCoreDataServices(configuration, useInMemory);
             services.ConfigureIdentity();
 
+            services.Configure<CacheSettings>(configuration.GetSection("CacheSettings"));
             services.AddAutoMapper(typeof(MappingCoreProfile));
-
-            services.Configure<SendGridSettings>(configuration.GetSection("SendGrid"));
 
             services.AddScoped<IEventService, EventService>();
             services.AddScoped<IVenueService, VenueService>();

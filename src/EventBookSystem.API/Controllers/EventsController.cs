@@ -13,22 +13,26 @@ namespace EventBookSystem.API.Controllers
     public class EventsController : ControllerBase
     {
         private readonly IEventService _eventService;
+        private const int CacheDuration = 60;
 
-        public EventsController(IEventService eventService) => _eventService = eventService;
+        public EventsController(IEventService eventService)
+        {
+            _eventService = eventService;
+        }
 
         [HttpGet]
+        [ResponseCache(Duration = CacheDuration, Location = ResponseCacheLocation.Client, NoStore = false)]
         public async Task<IActionResult> GetAllEvents()
         {
             var events = await _eventService.GetAllEventsAsync();
-
             return Ok(events);
         }
 
         [HttpGet("{eventId}")]
+        [ResponseCache(Duration = CacheDuration, Location = ResponseCacheLocation.Client, NoStore = false)]
         public async Task<IActionResult> GetEventByIdAsync(Guid eventId)
         {
             var eventDto = await _eventService.GetEventByIdAsync(eventId);
-
             if (eventDto is null)
             {
                 return NotFound();
@@ -38,10 +42,10 @@ namespace EventBookSystem.API.Controllers
         }
 
         [HttpGet("{eventId}/sections/{sectionId}/seats")]
+        [ResponseCache(Duration = CacheDuration, Location = ResponseCacheLocation.Client, NoStore = false)]
         public async Task<IActionResult> GetSeatsBySection(Guid eventId, Guid sectionId)
         {
             var seats = await _eventService.GetSeatsBySection(eventId, sectionId);
-
             return Ok(seats);
         }
 
@@ -54,7 +58,6 @@ namespace EventBookSystem.API.Controllers
             }
 
             var createdEvent = await _eventService.CreateEventAsync(eventDto);
-
             return Ok(createdEvent);
         }
 
@@ -68,7 +71,6 @@ namespace EventBookSystem.API.Controllers
             }
 
             await _eventService.UpdateEventAsync(eventId, eventDto);
-
             return NoContent();
         }
 
@@ -77,7 +79,6 @@ namespace EventBookSystem.API.Controllers
         public async Task<IActionResult> DeleteEventAsync(Guid eventId)
         {
             await _eventService.DeleteEventAsync(eventId);
-
             return NoContent();
         }
     }

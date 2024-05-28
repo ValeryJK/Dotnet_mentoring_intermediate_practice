@@ -20,5 +20,8 @@ namespace EventBookSystem.Data.Entities
         public Section Section { get; set; } = null!;
 
         public Price Price { get; set; } = null!;
+
+#pragma warning disable
+        //public byte[]? RowVersion { get; set; }
     }
 }
