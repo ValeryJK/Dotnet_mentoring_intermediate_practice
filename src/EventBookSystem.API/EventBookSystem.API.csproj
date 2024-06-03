@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EventBookSystem.BackgroundServices\EventBookSystem.BackgroundServices.csproj" />
     <ProjectReference Include="..\EventBookSystem.Core.Service\EventBookSystem.Core.Service.csproj" />
   </ItemGroup>
 
